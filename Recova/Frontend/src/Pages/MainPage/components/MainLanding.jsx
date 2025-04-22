@@ -27,7 +27,7 @@ function MainLanding() {
   const navigate = useNavigate();
 
    const navList = (
-       <ul className="mt-2 ml-44 mb-4 flex flex-col gap-2 text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-5">
+       <ul className="mt-2 ml-56 mb-4 flex flex-col gap-2 text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
          <Typography
            as="li"
            variant="small"
