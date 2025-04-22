@@ -21,7 +21,7 @@ const App = () => {
           response.unique_ips_by_category_url,
           response.wallet_balance_account_age_bubble_chart_url,
           response.deposit_status_pie_chart_url,
-        //response.radar_chart_transaction_profiles_url,
+          //response.radar_chart_transaction_profiles_url,
         ]);
       }
     } catch (error) {
@@ -31,85 +31,76 @@ const App = () => {
   };
 
   return (
-    <div className="container">
-      <h2>Fraud Detection</h2>
+    <div className="main-wrapper">
+      <div className="container">
+        <h2 className="h2">Fraudulent Transaction Detection</h2>
+        <p>Upload transaction data to detect anomalies and generate insights</p>
 
-      <FileUpload setData={setData} setFilename={setFilename} />
+        <FileUpload setData={setData} setFilename={setFilename} />
 
-      {filename && (
-        <>
-          <button onClick={() => downloadFile(filename)}>Download</button>
-          <button onClick={handleGenerateImage} disabled={loadingImage}>
+        {filename && (
+          <>
+            <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}></div>
+            {/* <button onClick={() => downloadFile(filename)}>Download File</button>
+            <button onClick={handleGenerateImage} disabled={loadingImage}>
+              {loadingImage ? "Generating..." : "Generate Insights"}
+            </button> */}
+          </>
+        )}
+
+        <DataTable data={data} />
+
+        {filename && (
+          <div className="button-bar">
+          <button
+            className="generate-btn"
+            onClick={handleGenerateImage}
+            disabled={loadingImage}
+          >
             {loadingImage ? "Generating..." : "Generate Insights"}
           </button>
-        </>
-      )}
-      
-      <DataTable data={data} />
-
-      {imageUrls.length > 0 && (
-        <div>
-          <h3>Insights</h3>
-          {/* Render each image dynamically */}
-          {imageUrls.map((url, index) => (
-            <div key={index}>
-              <h4>Chart {index + 1}</h4>
-              <img
-                src={`http://localhost:8000${url}`}
-                alt={`chart-${index}`}
-                style={{ maxWidth: "100%" }}
-              />
-            </div>
-          ))}
+          <button className="download-btn" onClick={() => downloadFile(filename)}>
+            Download File
+          </button>
         </div>
-      )}
+        
+          // <div
+          //   style={{
+          //     display: "flex",
+          //     justifyContent: "center",
+          //     gap: "20px",
+          //     marginTop: "20px",
+          //     flexWrap: "wrap"
+          //   }}
+          // >
+          //   <button onClick={() => downloadFile(filename)}>Download File</button>
+          //   <button onClick={handleGenerateImage} disabled={loadingImage}>
+          //     {loadingImage ? "Generating..." : "Generate Insights"}
+          //   </button>
+          // </div>
+        )}
+
+        {imageUrls.length > 0 && (
+          <div className="insights">
+            <h3>Insights</h3>
+            {/* Render each image dynamically */}
+            {imageUrls.map((url, index) => (
+              <div key={index}>
+                <h4>Chart {index + 1}</h4>
+                <img
+                  src={`http://localhost:8000${url}`}
+                  alt={`chart-${index}`}
+                  style={{ maxWidth: "100%" }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
+
   );
 };
 
 export default App;
 
-
-// const App = () => {
-//   const [data, setData] = useState([]);
-//   const [filename, setFilename] = useState("");
-//   const [imageUrl, setImageUrl] = useState("");
-//   const [loadingImage, setLoadingImage] = useState(false);
-
-//   const handleGenerateImage = async () => {
-//     setLoadingImage(true);
-//     const url = await generateImage(filename);
-//     if (url) {
-//       setImageUrl(`http://localhost:8000${url}`);
-//     }
-//     setLoadingImage(false);
-//   };
-
-//   return (
-//     <div className="container">
-
-//       <h2>Fraud Detection</h2>
-
-//       <FileUpload setData={setData} setFilename={setFilename} />
-      
-//       {filename && (
-//         <>
-//           <button onClick={() => downloadFile(filename)}>Download</button>
-//           <button onClick={handleGenerateImage} disabled={loadingImage}>
-//             {loadingImage ? "Generating..." : "Generate Insights"}
-//           </button>
-//         </>
-//       )}
-//       {/*{<button onClick={() => downloadFile(filename)}>Download</button>}*/}
-//       <DataTable data={data} />
-//       {imageUrl && (
-//         <div>
-//           <h3>Insights</h3>
-//           <img src={imageUrl} alt="status plot" style={{ maxWidth: "100%"}} />
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default App;

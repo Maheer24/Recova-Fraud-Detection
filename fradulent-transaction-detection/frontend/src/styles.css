@@ -1,4 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+
+.h2{
+  font-family: 'Poppins';
+  font-weight: 900;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  background-color: #f9f9f9;
+}
+
 .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 40px auto;
+  max-width: 100%;
+  font-weight: 300;
+  /* text-align: center;
+  margin: 40px auto;
+  font-weight: 300;
+  max-width: 100%; */
+}
+
+.upload-bar {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  gap: 24px;
+  padding: 16px 24px;
+  border: 1.5px solid #d4d4d4;
+  border-radius: 1rem;
+  background-color: #f3f3f3;
+  width: 80%;
+  max-width: 1200px;
+  min-width: 1000px;
+  min-height: 1px;
+  margin: 0 auto 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.choose-file-btn {
+  border: 1.5px solid #000000;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  font-weight: 300;
+  transition: all 0.2s ease-in-out;
+}
+
+.choose-file-btn:hover {
+  background-color: #f4f4f4;
+}
+
+.filename {
+  justify-self: left;
+  font-size: 0.95rem;
+  color: #555;
+  max-width: 250px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.upload-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.upload-btn:hover {
+  background-color: #0056b3;
+}
+
+.table-container {
+  max-width: 1200px;
+  max-height: 400px;
+  overflow: auto;
+  border: 1px solid #ccc;
+
+  margin-top: 20px;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.insights {
+  width: 80%;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.insights img {
+  margin: 20px 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+/* .main-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 200px;
+  padding-top: 0px;
+} */
+
+.normal {
+  background-color: #c8e6c9;
+ 
+}
+
+.anomalous {
+  background-color: #fff59d;
+
+}
+
+.fraudulent {
+  background-color: #ef9a9a;
+ 
+} 
+
+.button-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  max-width: 1200px;
+  min-width: 1000px;
+  background-color: #fbfafa;
+  /* border: 1.5px solid #d4d4d4;
+  border-radius: 1rem; */
+  padding: 16px 40px;
+  margin: 20px auto;
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); */
+}
+
+.generate-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 36px;
+  border-radius: 8px;
+  font-size: 1rem;
+  flex: 2;
+  cursor: pointer;
+  font-weight: 400;
+  margin-right: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.generate-btn:hover {
+  background-color: #0056b3;
+}
+
+.download-btn {
+  background-color: transparent;
+  color: rgb(69, 69, 69);
+  border: 2px solid rgb(69, 69, 69);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  flex: 1;
+  cursor: pointer;
+  font-weight: 400;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #c9c9c9;
+  color: white;
+  border-color: #c9c9c9;
+}
+
+
+/* .container {
   text-align: center;
   margin: 20px;
 }
@@ -28,15 +225,15 @@ td {
 
 .normal {
   background-color: #c8e6c9;
-  /* Green */
+ 
 }
 
 .anomalous {
   background-color: #fff59d;
-  /* Yellow */
+
 }
 
 .fraudulent {
   background-color: #ef9a9a;
-  /* Red */
-}
+ 
+} */
