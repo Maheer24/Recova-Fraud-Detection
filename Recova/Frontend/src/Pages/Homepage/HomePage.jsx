@@ -35,7 +35,7 @@ function HomePage() {
     }
    
     const navList = (
-      <ul className="mt-2  mb-4 flex flex-col gap-2 text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-5">
+      <ul className="mt-2  mb-4 flex flex-col  text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
         <Typography
           as="li"
           variant="small"
