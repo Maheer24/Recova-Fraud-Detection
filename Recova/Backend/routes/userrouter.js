@@ -1,4 +1,3 @@
-
 import * as usercontroller from '../controllers/usercontroller.js';
 import { Router } from 'express';
 import { body } from 'express-validator';
