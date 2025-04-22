@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../../config/axios";
 import UserProfile from "./UserProfile";
+import ProfileContent from "./ProfileContent";
 
 import {
   Navbar,
@@ -126,6 +127,11 @@ function MainLanding() {
           </Navbar>
         </div>
       </NavbarComp>
+
+
+      <div className="w-full ">
+       <ProfileContent/>
+       </div>
     </div>
   );
 }

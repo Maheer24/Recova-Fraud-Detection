@@ -93,13 +93,12 @@ export default function Pricing() {
 />
 </div>
       <div className="mx-auto  max-w-4xl text-center">
-        <h2 className="text-lg font-semibold  text-indigo-600">Pricing</h2>
-        <p className="mt-2 text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-5xl">
-          Choose the right plan for you
+        <p className=" textr   text-[1.5vw] font-poppinsSemiBold tracking-tight text-balance text-gray-900 sm:text-[3.7vw]">
+          Choose the right plan for you !
         </p>
       </div>
-      <p className="mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-gray-600 sm:text-md">
-        Choose an affordable plan that’s packed with the best features! 
+      <p className="mx-auto mt-2 font-semibold font-poppinsLight max-w-2xl text-center text-lg text-gray-600 sm:text-[15px]">
+        Choose an affordable plan that’s packed with the best features. 
       </p>
       <div className="mx-auto mt- grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-10 sm:gap-y-0 lg:max-w-3xl lg:grid-cols-2">
         {tiers.map((tier, tierIdx) => (
@@ -180,28 +179,12 @@ export default function Pricing() {
                         >
                           <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div className="sm:flex sm:items-start">
-                              {/* <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
-                                <ExclamationTriangleIcon aria-hidden="true" className="size-6 text-red-600" />
-                              </div> */}
+                             
                               <div className=" ml-14 text-center sm:mt-0 ">
                                 <DialogTitle as="h3" className="text-2xl tracking-tight flex items-center justify-center text-gray-900">
                                   <i>Pay with</i>
                                 </DialogTitle>
-                                {/* <div className="mt-7 bg-pink-200 flex items-center justify-center gap-14">
                             
-                                 <button  className=' bg-red-400 w-32 h-10 transform hover:scale-110 transition-transform  duration-300  flex items-center justify-center'>
-                                    <img src={stripepic} className='w-full h-16 object-contain ' alt="stripe" />
-                                  </button>
-                                
-                                
-                                 <button className='w-40 h-10 p-2  rounded-md flex items-center justify-center'>
-                                    <img src={payfastpic} className='w-full object-contain ' alt="payfast" />
-                                  </button>
-                                
-
-
-
-                                </div> */}
 
 <div className="mt-7  flex items-center justify-center gap-10">
   <button className=" w-40 h-14  flex items-center justify-center overflow-hidden" onClick={handleClick}>
@@ -216,23 +199,7 @@ export default function Pricing() {
                               </div>
                             </div>
                           </div>
-                          {/* <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                            <button
-                              type="button"
-                              // onClick={}
-                              className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto"
-                            >
-                              Logout
-                            </button>
-                            <button
-                              type="button"
-                              data-autofocus
-                              onClick={closeModal}
-                              className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                            >
-                              Cancel
-                            </button>
-                          </div> */}
+                      
                         </DialogPanel>
                       </div>
                     </div>
