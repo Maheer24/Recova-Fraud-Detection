@@ -37,7 +37,7 @@ const FileUpload = ({ setData, setFilename }) => {
         <input type="file" onChange={handleFileChange} hidden />
       </label>
       <span className="filename">{file?.name || "No file chosen"}</span>
-      <button className="upload-btn" onClick={handleUpload}>Upload</button>
+      <button className="upload-btn bg-primary " onClick={handleUpload}>Upload</button>
     </div>
   );
 };

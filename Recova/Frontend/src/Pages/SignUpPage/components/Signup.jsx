@@ -29,7 +29,7 @@ export default function SignUp()  {
         password: password
       }).then((res) => {
         localStorage.setItem("token", res.data.token);
-        navigate('/main')
+        navigate('/profile')
       
         console.log(res.data)
 
