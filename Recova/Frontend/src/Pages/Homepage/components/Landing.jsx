@@ -44,10 +44,10 @@ export default function Landing() {
             <h1 className="text-5xl font-semibold tracking-tighter font-cabin  text-balance text-secondary sm:text-7xl">
               Catch Fraudsters, Stay Secure.
             </h1>
-            <p className="mt-8 text-[13px] leading-snug ml-2   font-medium font-poppinsMedium text-gray-500  sm:text-[16px] text-wrap">
+            <p className="mt-8 text-[13px] leading-snug ml-2   font-medium font-poppinsMedium text-gray-600  sm:text-[16px] text-wrap">
             Protect Your Transactions, Stop Fraud in Its Tracks!
             </p>
-            <div className="mt-10 flex  items-center justify-center gap-x-6">
+            <div className="mt-20 flex  items-center justify-center gap-x-6">
               <a
                 href="#"
                 className="rounded-md bg-primary px-5 py-2.5  text-sm font-medium text-white shadow-xs hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-300 ease-in-out"
