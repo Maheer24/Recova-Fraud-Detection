@@ -36,7 +36,7 @@ usermodel.methods.comparepassword = async function (password) {
     
 }
 usermodel.methods.generatetoken = function () {
-    return jwt.sign({email:this.email}, process.env.JWT_SECRET,  { expiresIn: "24h" })
+    return jwt.sign({email:this.email}, process.env.JWT_SECRET,  { expiresIn: "1h" })
 }
 
 const user = mongoose.model("user",usermodel);

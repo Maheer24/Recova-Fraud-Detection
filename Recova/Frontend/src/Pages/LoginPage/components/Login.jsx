@@ -44,7 +44,7 @@ export default function LoginIn() {
       //--------------------------------
       //navigate('/profile')
       localStorage.setItem("token", res.data.token);
-      window.location.href = 'http://localhost:5174';
+      navigate("/profile",{ replace: true });
       console.log(res.data)
       setsuccess("Login successful")
       //-----------------------------------

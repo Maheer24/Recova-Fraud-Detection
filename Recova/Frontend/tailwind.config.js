@@ -6,6 +6,18 @@ export default {
   ],
   theme: {
     extend: {
+
+      animation: {
+        'spin-delay': 'spin 2s ease-in-out 1s infinite',
+      },
+      keyframes: {
+        spin: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+      },
+
+    
       colors: {
         primary:  "#223b6d",
         secondary: "#212121",

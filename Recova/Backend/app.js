@@ -7,6 +7,9 @@ import passport from 'passport';
 import GoogleStrategy from 'passport-google-oauth20';
 import cors from 'cors';
 import Stripe from 'stripe';
+import * as  auth from './middleware/authmiddleware.js';
+import qs from 'qs';
+import crypto from 'crypto';
 
 
 
@@ -57,12 +60,15 @@ passport.deserializeUser((obj, done) => {
 });
 
 
+
+
 //creat user restapi
 app.use('/api/user', userRouter);
 app.get("/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"], prompt: "select_account" })
 
 );
+
 
 // Google OAuth callback URL
 app.get("/auth/google/callback",
@@ -103,7 +109,7 @@ app.post('/create-checkout-session', async (req, res) => {
   }
 });
 
-app.get('/success', async (req, res) => {
+app.get('/success', auth.authuser,async (req, res) => {
   const sessionid = req.query.session_id;
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionid);
@@ -118,9 +124,75 @@ app.get('/success', async (req, res) => {
 
   } catch (error) {
     console.error('Error retrieving session:', error);
-    res.status(500).send('Internal Server Error');
+    return res.redirect('http://localhost:5173/login');
 
   }
 })
 
+
+app.post('/ask', async (req, res) => {
+  const userQuestion = req.body.message;
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` // Put your key in .env file
+    },
+    body: JSON.stringify({
+      model: 'gpt-4', // or gpt-3.5-turbo
+      messages: [
+        {
+          role: 'system',
+          content: `You are an assistant for the website BookARide.com. This website allows users to easily book rides at affordable prices. Answer based on this information only.`
+        },
+        {
+          role: 'user',
+          content: userQuestion
+        }
+      ]
+    })
+  });
+
+  const data = await response.json();
+  res.json({ reply: data.choices[0].message.content });
+});
+
+
+app.post('/payfast/pay', (req, res) => {
+  const { amount, name, email } = req.body;
+
+
+  const MERCHANT_ID = process.env.MERCHANT_ID;
+  const MERCHANT_KEY = process.env.MERCHANT_KEY;
+  const RETURN_URL = process.env.RETURN_URL;
+  const CANCEL_URL = process.env.CANCEL_URL;
+  const NOTIFY_URL = process.env.NOTIFY_URL;
+  const data = {
+    merchant_id: MERCHANT_ID,
+    merchant_key: MERCHANT_KEY,
+    return_url: RETURN_URL,
+    cancel_url: CANCEL_URL,
+    notify_url: NOTIFY_URL,
+    amount,
+    item_name: 'Purchase',
+    name_first: name,
+    email_address: email,
+  };
+
+  const queryString = qs.stringify(data);
+  const redirectUrl = `	https://sandbox.payfast.co.za/eng/process?${queryString}`;
+
+  res.json({ redirectUrl });
+});
+
+app.post('/notify', (req, res) => {
+  // Implement security verification here!
+  console.log('Payment notification received', req.body);
+  res.status(200).send('OK');
+});
+
+
 export default app;
+
+

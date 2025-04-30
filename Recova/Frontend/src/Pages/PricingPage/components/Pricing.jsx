@@ -9,6 +9,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import stripepic from '../../../assets/stripe-logo.png'
 import payfastpic from '../../../assets/payfast.png'
+import { useNavigate } from 'react-router-dom';
 
 const tiers = [
   {
@@ -19,6 +20,7 @@ const tiers = [
     description: "The perfect plan if you're just getting started with our product.",
     features: ['25 products', 'Up to 10,000 subscribers', 'Advanced analytics', '24-hour support response time'],
     featured: false,
+    free:true,
   },
   {
     name: 'Enterprise',
@@ -35,6 +37,7 @@ const tiers = [
       'Custom integrations',
     ],
     featured: true,
+    free:false,
   },
 ]
 
@@ -63,6 +66,26 @@ const handleClick = async () => {
   }
 };
 
+const handlePayment = async () => {
+  try {
+    // Make POST request to the backend to get the redirect URL
+    const res = await axios.post('http://localhost:3000/payfast/pay', {
+      amount: '100.00',
+      name: 'John',
+      email: 'john@example.com',
+    });
+
+    // Get the redirect URL from the response
+    const { redirectUrl } = res.data;
+
+    // Redirect the user to PayFast
+    window.location.href = redirectUrl;
+  } catch (error) {
+    console.error('Payment error:', error);
+  }
+};
+
+
 export default function Pricing() {
    const [logout, setlogout] = useState(false)
     const [opendialog, setopendialog] = useState(true)
@@ -73,6 +96,7 @@ export default function Pricing() {
     const closeModal = () => {
       setlogout(false);
     };
+    const navigate = useNavigate();
     
   return (
     
@@ -105,7 +129,7 @@ export default function Pricing() {
           <div
             key={tier.id}
             className={classNames(
-              tier.featured ? 'relative bg-gray-900 shadow-2xl' : 'bg-white/60 sm:mx-8 lg:mx-0',
+              tier.featured ? 'relative bg-gray-700 shadow-2xl' : 'bg-white/60 sm:mx-8 lg:mx-0',
               tier.featured
                 ? ''
                 : tierIdx === 0
@@ -161,9 +185,22 @@ export default function Pricing() {
                 'mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10',
               )}
             >
-              <button onClick={openmodal}>
+
+              {tier.free ? (
+                 <button onClick={()=>navigate('/profile')} className='w-full'>
+              Start your free trial! 
+              </button> 
+
+              ):(
+                 <button onClick={openmodal} className='w-full'>
               Get started today
-              </button>
+              </button> 
+
+              )}
+             
+                    
+                    
+                    
                      {logout && <Modal>
                     <Dialog open={opendialog} onClose={closeModal} className="relative z-10">
                   <DialogBackdrop
@@ -191,7 +228,7 @@ export default function Pricing() {
     <img src={stripepic} className=" h-16 transform hover:scale-110 transition-transform duration-100 ease-in-out object-contain" alt="stripe" />
   </button>
 
-  <button className="w-40 h-10 p-2 rounded-md flex items-center justify-center">
+  <button className="w-40 h-10 p-2 rounded-md flex items-center justify-center" onClick={handlePayment}>
     <img src={payfastpic} className="w-full transform hover:scale-110 transition-transform duration-100 ease-in-out object-contain mr-10" alt="payfast" />
   </button>
 </div>
@@ -208,7 +245,10 @@ export default function Pricing() {
                         </Modal>}
             </a>
           </div>
+          
         ))}
+         
+                    
       </div>
     </div>
   )

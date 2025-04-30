@@ -29,13 +29,28 @@ function HomePage() {
       navigate("/login");
   
     }
+    const token = localStorage.getItem("token");
+
+    const handlenavigation = () => {
+      if(!token){
+        console.log("please login first!")
+  
+        navigate("/login");
+      }
+      else{
+        navigate("/pricing");
+      }
+    }
+  
+
+
     const handleSignupNavigate = () => {
       navigate("/signup");
   
     }
    
     const navList = (
-      <ul className="mt-2  mb-4 flex flex-col  text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
+      <ul className="mt-2 nav  mb-4 flex flex-col  text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
         <Typography
           as="li"
           variant="small"
@@ -62,7 +77,7 @@ function HomePage() {
           color="blue-gray"
           className="p-1 font-normal"
         >
-          <a href="/pricing" className="flex font-poppinsRegular items-center">
+          <a href="" className="flex font-poppinsRegular items-center" onClick={handlenavigation}>
             Pricing
           </a>
         </Typography>
@@ -73,7 +88,7 @@ function HomePage() {
           className="p-1 "
         >
           <a href="#" className="flex font-poppinsRegular  items-center">
-            Docs
+            Help
           </a>
         </Typography>
       </ul>
@@ -94,7 +109,7 @@ function HomePage() {
                     <div className='flex justify-center items-center'>
                    {/* <img src={logo} alt="" className='w-12' /> */}
                     {/* <img src={image} alt="" className='w-15 '/> */} 
-                    <h1 className='tracking-widest font-opensans font-semibold text-2xl'>REC<span className=''>✦</span>VA</h1>
+                    <h1 className='tracking-widest font-opensans font-semibold text-2xl'>RECOVA🔹</h1>
                     
                     </div>
                   </Typography>

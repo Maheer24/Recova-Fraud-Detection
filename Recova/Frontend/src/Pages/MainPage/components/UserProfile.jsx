@@ -14,6 +14,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
+import { Spinner } from "@material-tailwind/react";
 import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
@@ -21,10 +22,11 @@ import Logout from "@mui/icons-material/Logout";
 import { MdFormatPaint } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import axios from "../../../config/axios";
-import pic from "../../../assets/def.webp";
+import pic from "../../../assets/user.png";
 import Modal from "../../../components/Modal";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import Loader from "../../../components/Loader";
 
 function UserProfile() {
   const [userinfo, setuserinfo] = useState(null);
@@ -32,30 +34,81 @@ function UserProfile() {
   const [profile, setprofile] = useState(pic);
   const [logout, setlogout] = useState(false)
    const [opendialog, setopendialog] = useState(true)
+   const [loading, setloading] = useState(true)
+   const [checkingAuth, setCheckingAuth] = useState(true);
+   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+
+  //   if (token) {
+  //     axios
+  //       .get("/api/user/profile", {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //         withCredentials: true,
+  //       })
+  //       .then((res) => {
+  //         console.log("User  data:", res.data);
+  //         setuserinfo(res.data);
+  //         setprofile(res.data.profilePic || pic);
+
+
+          
+  //         setloading(false);
+         
+
+          
+        
+
+  //         // Handle profile data here
+  //       })
+  //       .catch((err) => {
+  //         console.error(err);
+  //         navigate("/login",{ replace: true });
+
+            
+           
+  //         // Handle errors (e.g., token is invalid or expired)
+  //       });
+       
+  //   }
+  // }, [navigate]); 
+ 
+
+  
   useEffect(() => {
-    const token = localStorage.getItem("token");
 
-    if (token) {
-      axios
-        .get("/api/user/profile", {
+    
+    const fetchProfile = async () => {
+    
+   
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setloading(false); 
+        navigate("/login", { replace: true });
+        return;
+      }
+
+      try {
+        const res = await axios.get("/api/user/profile", {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
-        })
-        .then((res) => {
-          console.log("User  data:", res.data);
-          setuserinfo(res.data);
-          setprofile(res.data.profilePic || pic); // Set profile picture or default to pic
-
-          // Handle profile data here
-        })
-        .catch((err) => {
-          console.error(err);
-          // Handle errors (e.g., token is invalid or expired)
         });
-    }
-  }, []); // Emp
-  const navigate = useNavigate();
+        setuserinfo(res.data);
+        setprofile(res.data.profilePic || null);
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+        navigate("/login", { replace: true });
+       
+      } finally {
+        setloading(false);
+       
+        // Set loading to false no matter what
+      }
+    };
+
+    fetchProfile();
+  }, [navigate]);
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -103,37 +156,37 @@ function UserProfile() {
   };
   
 
-  useEffect(
-    () => async () => {
-      // Fetch user profile from the backend
-      await axios
-        .get("/api/user/profile", { withCredentials: true })
-
-        .then((response) => {
-          console.log("✅ User Profile Data:", response.data);
-          setuserinfo(response.data);
-          setprofile(response.data.profilePic || pic); // Set profile picture or default to pic
-        })
-        .catch((error) => {
-          console.error("Error fetching user profile:", error);
-        });
-    },
-    []
-  );
   if (!userinfo) {
-    return <div>Loading...</div>;
+
+       return (
+      
+        <div className="flex justify-center items-center min-h-screen w-full overflow-hidden bg-white fixed top-0 left-0 z-50">
+      <Loader />  {/* Assuming this is the loader component */}
+    </div>
+      
+    );
   }
+ 
+ 
+  
 
   const { email, name, profilePic } = userinfo;
   console.log("User Info:", userinfo);
 
   return (
     <div>
+     
+      {loading &&  (
+        <div className="flex justify-center items-center min-h-screen bg-white">
+          <Loader />
+        </div>
+
+      )}
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
         <Avatar
           onClick={handleClick}
           sx={{
-            border: ".5px black solid",
+           
             width: { md: 34, sm: 34, lg: 40 },
             height: { md: 34, sm: 34, lg: 40 },
             fontSize: { md: "1.5vw" },
@@ -191,14 +244,10 @@ function UserProfile() {
             <MdFormatPaint fontSize="large" className="iconscolor " />
           </ListItemIcon>
           <p className="dropdown ">Themes</p>
-          {/* <MaterialUISwitch checked={darkMode} onChange={handleThemeChange}/> */}
+          
 
           <div>
-            {/* <button onClick={toggleDarkMode} className="ml-4 px-4 py-2 border rounded">
-                {darkMode ? 'Light Mode' : 'Dark Mode'}
-              </button> */}
-
-            {/* <MaterialUISwitch checked={darkMode} onChange={toggleDarkMode} /> */}
+         
           </div>
         </MenuItem>
 

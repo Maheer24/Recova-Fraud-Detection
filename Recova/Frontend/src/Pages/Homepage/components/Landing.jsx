@@ -50,11 +50,11 @@ export default function Landing() {
             <div className="mt-20 flex  items-center justify-center gap-x-6">
               <a
                 href="#"
-                className="rounded-md bg-primary px-5 py-2.5  text-sm font-medium text-white shadow-xs hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-300 ease-in-out"
+                className="rounded-md bg-primary px-5 py-2.5  text-sm font-poppinsMedium text-white shadow-xs hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-300 ease-in-out"
               >
                 Get started
               </a>
-              <a href="#" className="text-sm/6 font-semibold text-gray-900 rounded-[5px] p-[5px] px-4 outline-none focus:outline-none hover:outline hover:outline-[1px] hover:outline-primary transition-all duration-200">
+              <a href="#" className="text-sm/6 font-poppinsMedium text-gray-900 rounded-[5px] p-[5px] px-4 outline-none focus:outline-none hover:outline hover:outline-[1px] hover:outline-primary transition-all duration-200">
                 Learn more <span aria-hidden="true">→</span>
               </a>
             </div>
