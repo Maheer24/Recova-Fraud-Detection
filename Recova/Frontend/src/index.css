@@ -102,3 +102,32 @@
     background-position: 0% 50%;
   }
 }
+
+
+nav a {
+  position: relative;
+  text-decoration: none;
+  color: #000;
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #223b6d;
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+
+.gradientblue{ 
+  background:linear-gradient(to right, #F1DFF4,#F2F4FF);
+}
+
+

@@ -96,7 +96,7 @@ export const logoutController = async (req,res) => {
 
     // 🔥 If JWT token exists, invalidate it
     if (token) {
-        redisclient.set(token, "logout", 'EX', 86400);
+        redisclient.set(token, "logout", 'EX', 3600);
 
         console.log(token, "JWT token invalidated");
         console.log("JWT token invalidated");
@@ -125,3 +125,5 @@ export const logoutController = async (req,res) => {
         return res.status(400).send({ errormessage: error.message });
     }
 }
+
+

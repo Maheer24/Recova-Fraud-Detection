@@ -18,6 +18,8 @@ export const authuser = async (req, res, next) => {
         if (!token) {
             console.log("No token found in cookies or headers.");
             console.log("now finding google session cookie");
+           
+            
 
             // Check if user is authenticated via Google OAuth
             if (req.isAuthenticated() && req.user?.accessToken) {
@@ -51,7 +53,11 @@ export const authuser = async (req, res, next) => {
         next();
     } catch (error) {
         console.error("❌ Authentication Error:", error.message);
-        return res.status(401).send({ errormessage: "Unauthorized user." });
+        return res.redirect('http://localhost:5173/login');
+        
+        // return res.status(401).send({ errormessage: "Unauthorized user." });
+       
+        
     }
 };
 

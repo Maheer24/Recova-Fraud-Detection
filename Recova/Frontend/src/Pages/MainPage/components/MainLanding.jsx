@@ -15,7 +15,18 @@ import {
 import NavbarComp from "../../Homepage/components/NavbarComp";
 
 function MainLanding() {
+  const navigate = useNavigate();
   const [openNav, setOpenNav] = useState(false);
+
+  const token = localStorage.getItem("token");
+
+  const handlenavigation = () => {
+    if(!token){
+      console.log("please login first!")
+
+      navigate("/login");
+    }
+  }
 
   useEffect(() => {
     window.addEventListener(
@@ -24,10 +35,10 @@ function MainLanding() {
     );
   }, []);
 
-  const navigate = useNavigate();
+  
 
    const navList = (
-       <ul className="mt-2 ml-56 mb-4 flex flex-col gap-2 text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
+       <ul className="mt-2 nav ml-56 mb-4 flex flex-col gap-2 text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
          <Typography
            as="li"
            variant="small"
@@ -54,7 +65,7 @@ function MainLanding() {
            color="blue-gray"
            className="p-1 font-normal"
          >
-           <a href="/pricing" className="flex font-poppinsRegular items-center">
+           <a href="/pricing" className="flex font-poppinsRegular items-center" onClick={handlenavigation}>
              Pricing
            </a>
          </Typography>
@@ -65,7 +76,7 @@ function MainLanding() {
            className="p-1 "
          >
            <a href="#" className="flex font-poppinsRegular  items-center">
-             Docs
+             Help
            </a>
          </Typography>
        </ul>
