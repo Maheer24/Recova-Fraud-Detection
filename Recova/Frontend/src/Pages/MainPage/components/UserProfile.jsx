@@ -7,7 +7,6 @@ import {
   IconButton,
   Card,
 } from "@material-tailwind/react";
-
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -35,63 +34,19 @@ function UserProfile() {
   const [logout, setlogout] = useState(false)
    const [opendialog, setopendialog] = useState(true)
    const [loading, setloading] = useState(true)
-   const [checkingAuth, setCheckingAuth] = useState(true);
    const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-
-  //   if (token) {
-  //     axios
-  //       .get("/api/user/profile", {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //         withCredentials: true,
-  //       })
-  //       .then((res) => {
-  //         console.log("User  data:", res.data);
-  //         setuserinfo(res.data);
-  //         setprofile(res.data.profilePic || pic);
-
-
-          
-  //         setloading(false);
-         
-
-          
-        
-
-  //         // Handle profile data here
-  //       })
-  //       .catch((err) => {
-  //         console.error(err);
-  //         navigate("/login",{ replace: true });
-
-            
-           
-  //         // Handle errors (e.g., token is invalid or expired)
-  //       });
-       
-  //   }
-  // }, [navigate]); 
  
-
-  
   useEffect(() => {
-
-    
     const fetchProfile = async () => {
-    
-   
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setloading(false); 
-        navigate("/login", { replace: true });
-        return;
-      }
-
+      setloading(true); // Start loading
+  
       try {
         const res = await axios.get("/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+         
           withCredentials: true,
         });
         setuserinfo(res.data);
@@ -99,16 +54,14 @@ function UserProfile() {
       } catch (err) {
         console.error("Error fetching user profile:", err);
         navigate("/login", { replace: true });
-       
       } finally {
-        setloading(false);
-       
-        // Set loading to false no matter what
+        setloading(false); // Stop loading
       }
     };
-
+  
     fetchProfile();
   }, [navigate]);
+  
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {

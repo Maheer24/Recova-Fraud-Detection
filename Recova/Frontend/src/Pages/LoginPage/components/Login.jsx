@@ -40,10 +40,6 @@ export default function LoginIn() {
 
     ).then((res) => {
       localStorage.setItem("token", res.data.token);
-
-      //--------------------------------
-      //navigate('/profile')
-      localStorage.setItem("token", res.data.token);
       navigate("/profile",{ replace: true });
       console.log(res.data)
       setsuccess("Login successful")

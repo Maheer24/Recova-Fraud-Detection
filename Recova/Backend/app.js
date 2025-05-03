@@ -10,6 +10,7 @@ import Stripe from 'stripe';
 import * as  auth from './middleware/authmiddleware.js';
 import qs from 'qs';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 
 
@@ -70,13 +71,40 @@ app.get("/auth/google",
 );
 
 
-// Google OAuth callback URL
+
 app.get("/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    res.redirect("http://localhost:5173/profile"); // Redirect after successful login
+    // ✅ Create token with user info
+    const token = jwt.sign(
+      {
+        name: req.user.displayName,
+        email: req.user.emails[0].value,
+        profilePic: req.user.photos[0].value,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    // ✅ Set token as cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // true in production with HTTPS
+      sameSite: "lax",
+    });
+
+    // ✅ Now redirect to frontend
+    res.redirect("http://localhost:5173/profile");
   }
 );
+
+// Google OAuth callback URL
+// app.get("/auth/google/callback",
+//   passport.authenticate("google", { failureRedirect: "/login" }),
+//   (req, res) => {
+//     res.redirect("http://localhost:5173/profile"); // Redirect after successful login
+//   }
+// );
 app.get("/auth/logout", (req, res) => {
 
 });
