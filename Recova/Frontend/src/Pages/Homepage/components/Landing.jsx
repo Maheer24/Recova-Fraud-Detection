@@ -18,7 +18,7 @@ export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div className="  z-40 ">
+    <div className=" dark:bg-[#212121] z-40 ">
      
 
       <div className="relative isolate px-6  lg:px-8">
@@ -36,15 +36,15 @@ export default function Landing() {
   className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
 />
 </div>
-        <div className="mx-auto h-auto  max-w-2xl py-32 sm:py-32">
+        <div className="mx-auto h-auto  max-w-2xl py-32 sm:py-36">
           <div className="hidden sm:mb-8 sm:flex sm:justify-center">
         
           </div>
           <div className="text-center ">
-            <h1 className="text-5xl font-semibold tracking-tighter font-cabin  text-balance text-secondary sm:text-7xl">
+            <h1 className="text-5xl font-semibold tracking-tighter font-cabin  text-balance text-secondary dark:text-gray-100 sm:text-7xl">
               Catch Fraudsters, Stay Secure.
             </h1>
-            <p className="mt-8 text-[13px] leading-snug ml-2   font-medium font-poppinsMedium text-gray-600  sm:text-[16px] text-wrap">
+            <p className="mt-8 text-[13px] leading-snug ml-2  dark:text-gray-400 font-medium font-poppinsMedium text-gray-600  sm:text-[16px] text-wrap">
             Protect Your Transactions, Stop Fraud in Its Tracks!
             </p>
             <div className="mt-20 flex  items-center justify-center gap-x-6">
@@ -54,7 +54,7 @@ export default function Landing() {
               >
                 Get started
               </a>
-              <a href="#" className="text-sm/6 font-poppinsMedium text-gray-900 rounded-[5px] p-[5px] px-4 outline-none focus:outline-none hover:outline hover:outline-[1px] hover:outline-primary transition-all duration-200">
+              <a href="#" className="text-sm/6 font-poppinsMedium dark:text-white text-gray-900 rounded-[5px] p-[5px] px-4 outline-none focus:outline-none hover:outline hover:outline-[1px] hover:outline-primary transition-all duration-200">
                 Learn more <span aria-hidden="true">→</span>
               </a>
             </div>

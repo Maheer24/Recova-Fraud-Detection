@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import png from '../../../assets/google.png'
+
 
 
 export default function LoginIn() {
@@ -20,6 +22,8 @@ export default function LoginIn() {
   const [error, seterror] = useState()
   const [success, setsuccess] = useState('')
   const [loading, setloading] = useState('')
+  const [signup, setsignup] = useState(false)
+  const [login, setlogin] = useState(true)
 
 
 
@@ -57,13 +61,25 @@ export default function LoginIn() {
 
 
   }
+
+  const getsignup = ()=>{
+    login ? setlogin(false) : setlogin(true)
+    signup ? setsignup(false) : setsignup(true)
+   
+
+  }
   return (
     <>
+    
+        <a href="/" className=" w-[3vw]">
 
-      <div className="flex min-h-full h-full  flex-col justify-center px-6 py-5 lg:px-8">
+          <IoIosArrowRoundBack className=" text-[2.1vw] ml-3 " />
+        </a>
+
+      <div className="flex h-full  dark:bg-secondary flex-col justify-center px-6 py-20 lg:px-5">
 
         {error && ( // Show error message if error exists
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mt-0 rounded relative mb-4" role="alert">
             <strong className="font-bold">Oops!</strong>
             <span className="block sm:inline"> {error} </span>
             <span className="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onClick={() => seterror("")}>
@@ -90,18 +106,14 @@ export default function LoginIn() {
 
 
 
-        <a href="/" className=" w-[3vw]">
 
-          <IoIosArrowRoundBack className="text-[2vw] " />
-        </a>
 
-        <div className="sm:mx-auto sm:w-full  sm:max-w-sm">
-          {/* <img
-            alt="Your Company"
-            src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-            className="mx-auto h-10 w-auto"
-          />  */}
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking- text-gray-900">
+        <div className=" w-full h-full flex">
+          <div className="w-[50%] h-full bg-green-600">hi</div>
+          <div className="w-[50%] h-full ">
+             <div className="sm:mx-auto sm:w-full dark:bg-secondary sm:max-w-sm">
+      
+          <h2 className="mt-6 text-center font-poppinsRegular text-2xl/9 dark:text-gray-400 font-bold tracking- text-gray-900">
             Log in to your account
           </h2>
         </div>
@@ -109,7 +121,7 @@ export default function LoginIn() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form action="#" method="POST" className="space-y-6" onSubmit={submitHandler}>
             <div>
-              <label htmlFor="email" className="block text-sm/6 font-medium  text-gray-900">
+              <label htmlFor="email" className="block font-poppinsRegular text-sm/6 dark:text-gray-400 font-medium  text-gray-900">
                 Email address
               </label>
               <div className="mt-2">
@@ -127,14 +139,11 @@ export default function LoginIn() {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
+                <label htmlFor="password" className="block font-poppinsRegular dark:text-gray-400 text-sm/6 font-medium text-gray-900">
                   Password
                 </label>
-                <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                    Forgot password?
-                  </a>
-                </div>
+               
+               
               </div>
               <div className="mt-2 relative">
                 <input
@@ -161,21 +170,142 @@ export default function LoginIn() {
             <div>
               <button
                 type="submit"
-                className="flex w-full tracking-wider justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full tracking-wider justify-center font-poppinsRegular rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Log in
               </button>
             </div>
           </form>
 
-          <p className="mt-10 text-center text-sm/6 text-gray-500">
+          <p className="mt-10 text-center font-poppinsRegular text-sm/6 text-gray-500">
             Don't have an account?{' '}
-            <a href="/signup" className="font-semibold text-indigo-600 hover:text-indigo-500">
+            <button onClick={getsignup} className="font-semibold font-poppinsRegular text-indigo-600 hover:text-indigo-500">
               Signup here
-            </a>
+            </button>
+
+           
           </p>
         </div>
+          </div>
+        </div>
+
+    
       </div>
+
+       {signup && (
+
+        <>
+          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                  {/* <img
+                    alt="Your Company"
+                    src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+                    className="mx-auto h-10 w-auto"
+                  /> */}
+                  <h2 className="mt-10 text-center text-2xl/9 dark:text-gray-400 font-poppinsRegular font-bold tracking- text-gray-900">
+                    Sign in to your account
+                  </h2>
+                </div>
+        
+                <div className="mt-1 sm:mx-auto sm:w-full sm:max-w-sm">
+                  <form action="#" method="POST" className="space-y-6" onSubmit={submitHandler}>
+                    <div>
+                      <label htmlFor="email" className="block font-poppinsRegular dark:text-gray-400 text-sm/6 font-medium  text-gray-900">
+                        Email address
+                      </label>
+                      <div className="mt-2">
+                        <input
+                         onChange={(e) => setemail(e.target.value)}
+                          id="email"
+                          name="email"
+                          type="email"
+                          required
+                          autoComplete="email"
+                          className="block w-full rounded-md bg-gray-100 border-[1px] border-gray-200 px-3 py-1.5 text-base text-gray-900  outline-gray-200 placeholder:text-gray-400  sm:text-sm/6"
+                        />
+                      </div>
+                    </div>
+        
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <label htmlFor="password" className="block font-poppinsRegular dark:text-gray-400 text-sm/6 font-medium text-gray-900">
+                          Password
+                        </label>
+                       
+                        
+                        
+                      </div>
+                   
+                     <div className="mt-2 relative  ">
+                        <input
+                          onChange={(e) => setpassword(e.target.value)}
+                          id="password"
+                          name="password"
+                          type={showPassword ? "text" : "password"}
+                          required
+                          autoComplete="current-password"
+                          className="block w-full rounded-md font-poppinsRegular bg-gray-100 border-[1px] border-gray-200 px-3 py-1.5 text-base text-gray-900  outline-gray-200 placeholder:text-gray-400  sm:text-sm/6"
+                        />
+                        
+                        <div className={` pl-1 absolute top-2 right-0 mr-3  `} onClick={handlePasswordVisibility}>
+                          {showPassword ? (
+                            <VisibilityOffOutlinedIcon className="text-gray-500 " />
+        
+                          ) : (
+                            <VisibilityOutlinedIcon className="text-gray-500" />
+                          )}
+                        </div>
+                        
+                        
+                      </div>
+                      
+                   
+                     
+                    </div>
+        
+                    <div>
+                      <button
+                        type="submit"
+                        className="flex w-full font-poppinsRegular justify-center tracking-wider  rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        Start your free trial!
+                      </button>
+                    </div>
+                  </form>
+        
+                  <p className="mt-2 text-center font-poppinsRegular text-sm text-gray-500">
+                    Already have an account?{' '}
+                    <a href="/login" className="font-semibold font-poppinsRegular text-indigo-600 hover:text-indigo-500">
+                      Login here
+                    </a>
+                  </p >
+        
+                  <p className="mt-7 text-center text-sm/6 font-poppinsRegular text-gray-500"> Or continue with</p>
+                  <div className="mt-2 flex gap-2 justify-center items-center">
+               <a  href="http://localhost:3000/auth/google">
+               <button
+                        type="submit"
+                        className="flex hover:bg-gray-300 transition-all duration-300 ease-in-out w-full justify-center tracking-wider rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-gray-500 shadow-xs  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                      <img src={png} className="w-[1.3vw] mt-[.2vw] h-[1.3vw] mr-2" alt="" />
+                        Google
+                      </button>
+               </a>
+                   
+                  </div>
+                </div>
+        </>
+              
+
+            )}
     </>
   )
 }
+
+
+
+
+
+
+
+
+   

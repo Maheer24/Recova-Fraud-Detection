@@ -101,10 +101,7 @@ export default function Pricing() {
   return (
     
     <div className="relative isolate bg-white px-6   sm:py-12 lg:px-8">
-        <a href="/" className=" w-[3vw]">
-                     
-                <IoIosArrowRoundBack className="text-[2vw]"/>
-                      </a>
+      
       <div aria-hidden="true" className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl">
       <div
   style={{
@@ -116,8 +113,12 @@ export default function Pricing() {
   className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
 />
 </div>
+  <a href="/" className=" w-[3vw]">
+                     
+                <IoIosArrowRoundBack className="text-[2vw] text-black"/>
+                      </a>
       <div className="mx-auto  max-w-4xl text-center">
-        <p className=" textr   text-[1.5vw] font-poppinsSemiBold tracking-tight text-balance text-gray-900 sm:text-[3.7vw]">
+        <p className=" gradient-text1   text-[1.5vw] font-poppinsSemiBold tracking-tight text-balance text-gray-900 sm:text-[3.7vw]">
           Choose the right plan for you !
         </p>
       </div>
