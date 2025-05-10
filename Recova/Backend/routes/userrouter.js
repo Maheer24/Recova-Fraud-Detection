@@ -32,4 +32,6 @@ router.post('/login',
 router.get('/logout' ,usercontroller.logoutController);
 
 
+router.post('/ask', usercontroller.getaicontroller);
+
 export default router;

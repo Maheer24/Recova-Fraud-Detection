@@ -158,33 +158,41 @@ app.get('/success', auth.authuser,async (req, res) => {
 })
 
 
-app.post('/ask', async (req, res) => {
-  const userQuestion = req.body.message;
+// app.post('/ask', async (req, res) => {
+//   const userQuestion = req.body.message;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` // Put your key in .env file
-    },
-    body: JSON.stringify({
-      model: 'gpt-4', // or gpt-3.5-turbo
-      messages: [
-        {
-          role: 'system',
-          content: `You are an assistant for the website BookARide.com. This website allows users to easily book rides at affordable prices. Answer based on this information only.`
-        },
-        {
-          role: 'user',
-          content: userQuestion
-        }
-      ]
-    })
-  });
+//   const response = await fetch('https://api.openai.com/v1/chat/completions', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` // Put your key in .env file
+//     },
+//     body: JSON.stringify({
+//       model: 'gpt-3.5-turbo',
+//       messages: [
+//         {
+//           role: 'system',
+//           content: `You are an assistant for the website BookARide.com. This website allows users to easily book rides at affordable prices. Answer based on this information only.`
+//         },
+//         {
+//           role: 'user',
+//           content: userQuestion
+//         }
+//       ]
+//     })
+//   });
+//  const data = await response.json();
+//     console.log('OpenAI API response:', data); // See the full response
 
-  const data = await response.json();
-  res.json({ reply: data.choices[0].message.content });
-});
+//     if (data.choices && data.choices.length > 0) {
+//       res.json({ reply: data.choices[0].message.content });
+//     } else {
+//       res.status(500).json({
+//         error: 'No valid response from OpenAI',
+//         fullResponse: data
+//       });
+//     } 
+// });
 
 
 app.post('/payfast/pay', (req, res) => {

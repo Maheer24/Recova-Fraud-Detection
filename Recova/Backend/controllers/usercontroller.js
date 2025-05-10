@@ -1,6 +1,7 @@
 import usermodel from "../models/usermodel.js";
 
 import * as userservice  from "../services/userservice.js";
+import {generateContent} from "../services/aiservice.js";
 import { validationResult } from "express-validator";
 import redisclient from '../services/redis.js'
 
@@ -124,6 +125,30 @@ export const logoutController = async (req,res) => {
     catch(error){
         return res.status(400).send({ errormessage: error.message });
     }
+}
+
+
+
+export const getaicontroller= async (req,res)=>{
+    const userQuestion = req.body.message;
+
+    if(!userQuestion){
+        return res.status(400).send("Message is required");
+        
+    }
+
+    try {
+    const response = await generateContent(userQuestion);
+    res.json({ reply: response });
+        
+    } catch (error) {
+        console.error("Error generating content:", error);  // Log the error here
+        return res.status(500).send({ errormessage: error.message, stack: error.stack });
+    }
+
+   
+   
+   
 }
 
 

@@ -38,14 +38,14 @@ function MainLanding() {
   
 
    const navList = (
-       <ul className="mt-2 nav ml-56 mb-4 flex flex-col gap-2 text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
+       <ul className="mt-2 nav ml-56 mb-4 flex  flex-col gap-2  text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
          <Typography
            as="li"
            variant="small"
            color="blue-gray"
            className=""
          >
-           <a href="#" className="flex font-poppinsRegular items-center">
+           <a href="#" className="flex font-poppinsRegular dark:text-gray-400  items-center">
              About
            </a>
          </Typography>
@@ -55,7 +55,7 @@ function MainLanding() {
            color="blue-gray"
            className="p-1 "
          >
-           <a href="#" className="flex font-poppinsRegular items-center">
+           <a href="#" className="flex font-poppinsRegular dark:text-gray-400  items-center">
              Account
            </a>
          </Typography>
@@ -65,7 +65,7 @@ function MainLanding() {
            color="blue-gray"
            className="p-1 font-normal"
          >
-           <a href="/pricing" className="flex font-poppinsRegular items-center" onClick={handlenavigation}>
+           <a href="/pricing" className="flex font-poppinsRegular dark:text-gray-400 items-center" onClick={handlenavigation}>
              Pricing
            </a>
          </Typography>
@@ -75,7 +75,7 @@ function MainLanding() {
            color="blue-gray"
            className="p-1 "
          >
-           <a href="#" className="flex font-poppinsRegular  items-center">
+           <a href="#" className="flex font-poppinsRegular dark:text-gray-400   items-center">
              Help
            </a>
          </Typography>
@@ -84,24 +84,24 @@ function MainLanding() {
 
   return (
     <div>
-      <NavbarComp>
-        <div className=" shadow-md  w-full mt-[.1vw] overflow-hidden ">
-          <Navbar className="fixed top-0 z-50  h-max max-w-full rounded-none px-5 py-1 lg:px-10 ">
-            <div className="flex items-center justify-between text-blue-gray-900 w-full">
+      <NavbarComp  >
+        <div className=" shadow-md dark:[#121212]  w-full mt-[.1vw] overflow-hidden ">
+          <Navbar className="fixed top-0 z-50 border-none bg-white dark:bg-[#212121] h-max max-w-full  rounded-none px-5 py-1 lg:px-10 ">
+            <div className="flex items-center justify-between dark:[#121212] text-blue-gray-900 w-full">
                 <Typography
                                  as="a"
                                  href="#"
-                                 className="mr-4 cursor-pointer py-1.5 text-lg font-bold text-black"
+                                 className="mr-4 cursor-pointer py-1.5 text-lg font-bold  text-black"
                                >
                                  <div className='flex justify-center items-center'>
                                 {/* <img src={logo} alt="" className='w-12' /> */}
                                  {/* <img src={image} alt="" className='w-15 '/> */} 
-                                 <h1 className='tracking-widest font-opensans font-semibold text-2xl'>REC<span className=''>✦</span>VA</h1>
+                                 <h1 className='tracking-widest font-opensans font-semibold dark:text-white  text-2xl'>REC<span className='text-[#3730A3]'>✦</span>VA</h1>
                                  
                                  </div>
                                </Typography>
 
-              <div className="hidden pr-[25vw]  text-black lg:flex">{navList}</div>
+              <div className="hidden pr-[25vw] dark:text-white  text-black lg:flex">{navList}</div>
 
               {/* Right Side - User Profile */}
               <div className="flex items-center  text-black gap-4">

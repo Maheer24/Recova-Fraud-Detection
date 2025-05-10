@@ -65,14 +65,14 @@
 }
 
 .gradient-text1 {
-  background: linear-gradient(270deg, #223b6d, black, #223b6d);
+  background: linear-gradient(270deg, #4172d4, black, #223b6d);
   background-size: 400% 400%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: moveGradient 6s ease infinite;
 }
 .gradient-text2 {
-  background: linear-gradient(270deg, #223b6d, black, #223b6d);
+  background: linear-gradient(270deg, #4172d4, black, #223b6d);
   background-size: 400% 400%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

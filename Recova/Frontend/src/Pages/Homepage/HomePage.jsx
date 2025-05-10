@@ -50,14 +50,14 @@ function HomePage() {
     }
    
     const navList = (
-      <ul className="mt-2 nav  mb-4 flex flex-col  text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
+      <ul className="mt-2 nav  mb-4 flex flex-col dark:text-white  text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center  lg:gap-7">
         <Typography
           as="li"
           variant="small"
           color="blue-gray"
           className=""
         >
-          <a href="#" className="flex font-poppinsRegular items-center">
+          <a href="#" className="flex font-poppinsRegular dark:text-gray-400 items-center">
             About
           </a>
         </Typography>
@@ -67,7 +67,7 @@ function HomePage() {
           color="blue-gray"
           className="p-1 "
         >
-          <a href="#" className="flex font-poppinsRegular items-center">
+          <a href="#" className="flex font-poppinsRegular dark:text-gray-400 items-center">
             Account
           </a>
         </Typography>
@@ -77,7 +77,7 @@ function HomePage() {
           color="blue-gray"
           className="p-1 font-normal"
         >
-          <a href="" className="flex font-poppinsRegular items-center" onClick={handlenavigation}>
+          <a href="" className="flex font-poppinsRegular dark:text-gray-400 items-center" onClick={handlenavigation}>
             Pricing
           </a>
         </Typography>
@@ -87,7 +87,7 @@ function HomePage() {
           color="blue-gray"
           className="p-1 "
         >
-          <a href="#" className="flex font-poppinsRegular  items-center">
+          <a href="#" className="flex font-poppinsRegular dark:text-gray-400  items-center">
             Help
           </a>
         </Typography>
@@ -98,8 +98,8 @@ function HomePage() {
     <div className='w-full h-screen'>
      
       <NavbarComp>
-          <div className=" shadow-md w-full mt-[.1vw] overflow-hidden ">
-              <Navbar className="fixed top-0 z-50  h-max max-w-full rounded-none px-10   lg:px-10 lg:py-">
+          <div className=" shadow-md border-none w-full mt-[.1vw] overflow-hidden ">
+              <Navbar className="fixed top-0 z-50 border-none dark:bg-secondary h-max max-w-full rounded-none px-10   lg:px-10 lg:py-">
                 <div className="flex items-center justify-between text-blue-gray-900">
                   <Typography
                     as="a"
@@ -107,9 +107,8 @@ function HomePage() {
                     className="mr-4 cursor-pointer py-1.5 text-lg font-bold text-black"
                   >
                     <div className='flex justify-center items-center'>
-                   {/* <img src={logo} alt="" className='w-12' /> */}
-                    {/* <img src={image} alt="" className='w-15 '/> */} 
-                    <h1 className='tracking-widest font-opensans font-semibold text-2xl'>RECOVA🔹</h1>
+           
+                    <h1 className='tracking-widest font-opensans font-semibold text-2xl dark:text-white'>REC<span className='dark:text-[#3730A3]'>✦</span>VA</h1>
                     
                     </div>
                   </Typography>
