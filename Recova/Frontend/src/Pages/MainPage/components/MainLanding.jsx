@@ -12,7 +12,7 @@ import {
   IconButton,
   Card,
 } from "@material-tailwind/react";
-import NavbarComp from "../../Homepage/components/NavbarComp";
+import NavbarComp from "../../../components/NavbarComp";
 
 function MainLanding() {
   const navigate = useNavigate();
