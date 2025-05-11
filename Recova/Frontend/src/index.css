@@ -90,7 +90,10 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
+.divider {
+  width: 2px;
+  background: linear-gradient(to bottom, #00c6ff, #0072ff);
+}
 @keyframes moveGradient {
   0% {
     background-position: 0% 50%;

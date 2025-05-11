@@ -12,7 +12,7 @@ import {
 } from "@material-tailwind/react";
 import image from '../../assets/RECOVA.png'
 import logo from '../../assets/1.png'
-
+import Footer from '../../components/Footer';
 function HomePage() {
   const [openNav, setOpenNav] = useState(false);
  
@@ -41,11 +41,33 @@ function HomePage() {
         navigate("/pricing");
       }
     }
+
+     const handlenavigation2 = () => {
+      if(!token){
+        console.log("please login first!")
+  
+        navigate("/login");
+      }
+      else{
+        navigate("/profile");
+      }
+    }
+
+     const handlenavigation3 = () => {
+      if(!token){
+        console.log("please login first!")
+  
+        navigate("/login");
+      }
+      else{
+        navigate("/pricing");
+      }
+    }
   
 
 
     const handleSignupNavigate = () => {
-      navigate("/signup");
+      navigate("/login");
   
     }
    
@@ -67,7 +89,7 @@ function HomePage() {
           color="blue-gray"
           className="p-1 "
         >
-          <a href="#" className="flex font-poppinsRegular dark:text-gray-400 items-center">
+          <a href="#" className="flex font-poppinsRegular dark:text-gray-400 items-center" onClick={handlenavigation2}>
             Account
           </a>
         </Typography>
@@ -87,7 +109,7 @@ function HomePage() {
           color="blue-gray"
           className="p-1 "
         >
-          <a href="#" className="flex font-poppinsRegular dark:text-gray-400  items-center">
+          <a href="/help" className="flex font-poppinsRegular dark:text-gray-400  items-center">
             Help
           </a>
         </Typography>
@@ -120,7 +142,7 @@ function HomePage() {
                       <Button
                         variant="text"
                         size="sm"
-                         className="hidden font-poppinsRegular tracking-wider lg:inline-block rounded-[5px] p-[6px] px-4 outline-none focus:outline-none hover:outline hover:outline-[1px] hover:outline-primary transition-all duration-200"
+                         className="hidden  dark:text-gray-400  font-poppinsRegular tracking-widest lg:inline-block rounded-[5px] p-[6px] px-4 outline-none focus:outline-none hover:outline hover:outline-[1px] hover:outline-primary transition-all duration-200"
 
 
                         onClick={handleLoginNavigate}
@@ -196,7 +218,7 @@ function HomePage() {
         
   
 
-      
+      <Footer/>
     </div>
   )
 }

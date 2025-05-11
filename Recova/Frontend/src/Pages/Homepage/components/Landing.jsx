@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -15,7 +16,24 @@ const navigation = [
 ]
 
 export default function Landing() {
+    const navigate = useNavigate();
+
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+
+    const token = localStorage.getItem("token");
+
+    const handlenavigation = () => {
+      if(!token){
+        console.log("please login first!")
+  
+        navigate("/login");
+      }
+      else{
+        navigate("/profile");
+      }
+    }
 
   return (
     <div className=" dark:bg-[#212121] z-40 ">
@@ -48,12 +66,12 @@ export default function Landing() {
             Protect Your Transactions, Stop Fraud in Its Tracks!
             </p>
             <div className="mt-20 flex  items-center justify-center gap-x-6">
-              <a
-                href="#"
+              <button
+                onClick={handlenavigation}
                 className="rounded-md bg-primary px-5 py-2.5  text-sm font-poppinsMedium text-white shadow-xs hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-300 ease-in-out"
               >
                 Get started
-              </a>
+              </button>
               <a href="#" className="text-sm/6 font-poppinsMedium dark:text-white text-gray-900 rounded-[5px] p-[5px] px-4 outline-none focus:outline-none hover:outline hover:outline-[1px] hover:outline-primary transition-all duration-200">
                 Learn more <span aria-hidden="true">→</span>
               </a>

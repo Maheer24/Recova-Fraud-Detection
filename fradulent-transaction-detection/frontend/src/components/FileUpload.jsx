@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useThemeContext } from "../context/ThemeContext";
 
 const FileUpload = ({ setData, setFilename }) => {
+  const { darkMode } = useThemeContext();
+  
   const [file, setFile] = useState(null);
 
   const handleFileChange = (event) => {
@@ -31,7 +34,7 @@ const FileUpload = ({ setData, setFilename }) => {
 
   return (
 
-    <div className="upload-bar">
+    <div className={`upload-bar dark:bg-secondary ${darkMode? "dark": ""} `}>
       <label className="choose-file-btn">
       Choose File
         <input type="file" onChange={handleFileChange} hidden />

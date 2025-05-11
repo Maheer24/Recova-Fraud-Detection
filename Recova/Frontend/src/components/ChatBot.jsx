@@ -4,6 +4,8 @@ import { FiSend } from "react-icons/fi";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import axios from '../config/axios'
+import { useThemeContext } from "../context/ThemeContext";
+
 
 const ChatBot = () => {
   const navigate = useNavigate();
@@ -15,171 +17,85 @@ const ChatBot = () => {
   const [error, setError] = useState("");
   const [reply, setReply] = useState('');
   const messagesEndRef = useRef(null);
+  const [hasSentInitial, setHasSentInitial] = useState(false);
+
+  const { darkMode } = useThemeContext();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
+  const hasSentInitialRef = useRef(false); // Store whether initial message was sent
+
+  // Effect to handle sending initial message once
   useEffect(() => {
-    if (initialMessage) {
-      const newMessage = {
-        text: initialMessage,
-        sender: "user",
-        timestamp: new Date()
-      };
-      setMessages([newMessage]);
-      setTimeout(() => {
-        const botReply = {
-          text: reply,
-          sender: "bot",
-          timestamp: new Date()
-        };
-        setMessages((prev) => [...prev, botReply]);
-        setIsTyping(false);
-      }, 1000);
+    if (initialMessage && !hasSentInitialRef.current) {
+      hasSentInitialRef.current = true; // Set ref so it won't be triggered again
+      handleSendMessage(initialMessage); // Send initial message
     }
   }, [initialMessage]);
 
+
 useEffect(() => {
-  if (!initialMessage) {
-    navigate("/profile"); // or wherever you want
+  scrollToBottom();
+}, [messages]);
+
+
+const handleSendMessage = async (message = inputMessage) => {
+  if (!message.trim()) {
+    setError("Please enter a message");
+    return;
   }
-}, []);
 
-
-// const handleSend = async () => {
-//   try {
-//     const res = await axios.post('/ask', { message: inputMessage });
-
-//     // In axios, response data is already parsed as JSON:
-//     setReply(res.data.reply);
-//     setInputMessage('');
-//   } catch (error) {
-//     console.error('Error sending message:', error);
-//     setReply('Something went wrong.');
-//   }
-// };
-
-  // const generateBotReply = () => {
-  //   const replies = [
-  //     "That's interesting! Tell me more.",
-  //     "I understand what you mean.",
-  //     "Thanks for sharing that!",
-  //     "How does that make you feel?",
-  //     "Could you elaborate on that?"
-  //   ];
-  //   return replies[Math.floor(Math.random() * replies.length)];
-  // };
-
-  // const handleSendMessage = async () => {
-  //   if (!inputMessage.trim()) {
-  //     setError("Please enter a message");
-  //     return;
-  //   }
-
-  //   setError("");
-  //   const newMessage = {
-  //     text: inputMessage,
-  //     sender: "user",
-  //     timestamp: new Date()
-  //   };
-
-  //   setMessages(prev => [...prev, newMessage]);
-  //   // setInputMessage("");
-  //   // setIsTyping(true);
-
-  //   setTimeout(() => {
-  //     const botReply = {
-  //       text: reply,
-  //       sender: "bot",
-  //       timestamp: new Date()
-  //     };
-  //     setMessages(prev => [...prev, botReply]);
-  //     setIsTyping(false);
-  //   }, 1000);
-  //        try {
-  //           // Make a POST request to the backend API
-  //           const res = await axios.post('/api/user/ask', {
-  //               message: inputMessage, // Send the message to the backend
-  //           });
-
-  //           // Get the response from the backend and set it
-  //           setReply(res.data.reply);
-  //           setInputMessage('');  // Clear input field
-  //       } catch (err) {
-  //           console.error("Error:", err);
-  //           setError('Failed to generate content. Please try again.');
-  //           setInputMessage(''); 
-  //       }
-  //       //  finally {
-  //       //     setLoading(false);  // Stop loading
-  //       // }
-  // };
-
-  const handleSendMessage = async () => {
-    // Check if the input message is empty
-    if (!inputMessage.trim()) {
-        setError("Please enter a message");
-        return;
-    }
-
-    setError("");
-    
-    // Add the user's message to the conversation
-    const newMessage = {
-        text: inputMessage,
-        sender: "user",
-        timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, newMessage]);
-    
-    // Clear the input field and set the bot as "typing"
-    setInputMessage('');
-    setIsTyping(true);
-
-    try {
-        // Make a POST request to the backend API with the user's message
-        const res = await axios.post('/api/user/ask', {
-            message: inputMessage, // Send the message to the backend
-        });
-
-        // Get the response from the backend and set it as the bot's reply
-        setReply(res.data.reply);
-
-        // Simulate the bot typing delay (e.g., 1 second)
-        setTimeout(() => {
-            const botReply = {
-                text: res.data.reply,
-                sender: "bot",
-                timestamp: new Date()
-            };
-            setMessages(prev => [...prev, botReply]);
-            setIsTyping(false);  // Stop the "typing" indicator
-        }, 1000);
-
-    } catch (err) {
-        console.error("Error:", err);
-        setError('Failed to generate content. Please try again.');
-    } finally {
-        // Ensure loading state is handled properly (if you have a loading state)
-        // setLoading(false);
-    }
-};
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
+  setError(""); // Clear any previous errors
+  const newMessage = {
+    text: message,
+    sender: "user",
+    timestamp: new Date()
   };
 
+  setMessages(prev => [...prev, newMessage]); 
+  setInputMessage(""); 
+  setIsTyping(true); 
+
+  try {
+    
+    const res = await axios.post('/api/user/ask', { message });
+
+    const replyText = res.data.reply;
+
+  
+    setTimeout(() => {
+      const botReply = {
+        text: replyText,
+        sender: "bot",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botReply]); // Add bot's reply
+      setIsTyping(false); // Hide typing indicator
+    }, 1000);
+  } catch (err) {
+    console.error("Error:", err);
+    setError('Failed to generate content. Please try again.');
+  }
+};
+
+
+
+const handleKeyPress = (e) => {
+  // Check if the Enter key is pressed (without Shift key)
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault(); // Prevent the default action (new line in textarea)
+    // Call handleSendMessage only if there's user input
+    if (inputMessage.trim()) {
+      handleSendMessage(inputMessage);
+    }
+  }
+};
+
   return (
-    <div className="flex  w-full ml-28 mt-60 p-1  items-center justify-center">
+    <div className={`flex  w-full ml-28 mt-60 p-1 dark:bg-secondary  items-center justify-center ${darkMode ? "dark" : ""}`}>
       <div className="w-full ml-32  rounded-lg shadow-xl ">
         <div className="flex-1 p-4 pt-32 h-[500px] mt-32   overflow-y-auto">
           {messages.map((message, index) => (
@@ -222,14 +138,14 @@ useEffect(() => {
             <textarea
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyPress={handleKeyPress }
               placeholder="Type your message..."
               className="flex-1 p-2 border-gray-300 border-[1px] rounded-lg pb-5 mb-20 focus:outline-none   resize-none"
               rows="1"
               aria-label="Message input"
             />
             <button
-              onClick={handleSendMessage}
+             onClick={() => handleSendMessage(inputMessage)}
               className="px-4 py-2 bg-primary  pb-5 mb-20 text-white rounded-lg hover:bg-blue-700 transition-colors"
               aria-label="Send message"
             >

@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import FileUpload from "./components/FileUpload";
 import DataTable from "./components/DataTable";
 import { downloadFile, generateImage } from "./services/api";
+import { useThemeContext } from "./context/ThemeContext";
 
 const App = () => {
   const [data, setData] = useState([]);
+  const { darkMode } = useThemeContext();
   const [filename, setFilename] = useState("");
   const [imageUrls, setImageUrls] = useState([]);  // Updated to store multiple images
   const [loadingImage, setLoadingImage] = useState(false);
@@ -31,8 +33,8 @@ const App = () => {
   };
 
   return (
-    <div className="main-wrapper">
-      <div className="container">
+    <div className={`main-wrapper dark:bg-secondary ${darkMode ? "dark" : ""}`}>
+      <div className="container dark:bg-secondary">
         <h2 className="h2">Fraudulent Transaction Detection</h2>
         <p>Upload transaction data to detect anomalies and generate insights</p>
 

@@ -27,17 +27,23 @@ import {
 } from "@heroicons/react/24/outline";
 import { RiSparkling2Fill } from "react-icons/ri";
 import { MdHomeFilled } from "react-icons/md";
+import { useThemeContext } from "../context/ThemeContext";
+import MaterialUISwitch from "./MaterialUISwitch";
+import { useNavigate } from "react-router-dom";
  
 export default function Sidebar() {
   const [open, setOpen] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(true);
+
+
+  const { darkMode, toggleDarkMode } = useThemeContext();
  
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
   };
  
   return (
-    <Card className="h-[calc(100vh-2rem)] dark:bg-secondary fixed rounded-lg w-full max-w-[15rem] p-1 shadow-xl shadow-blue-gray-900/5">
+    <Card className="h-[calc(100vh-2rem)] dark:bg-secondary fixed rounded-lg w-full max-w-[15rem] p-1 pt-5 shadow-xl shadow-blue-gray-900/5">
       <div className="mb-2 flex items-center  gap-4 p-2">
         {/* <img src="https://docs.material-tailwind.com/img/logo-ct-dark.png" alt="brand" className="h-8 w-8" /> */}
         {/* <Typography variant="h5" color="blue-gray">
@@ -49,7 +55,7 @@ export default function Sidebar() {
           open={open === 1}
        
         >
-        <a href="/profile">
+        <a href="/">
             <ListItem className="p-0  dark:text-white" selected={open === 1}>
             <AccordionHeader onClick={() => handleOpen(1)} className="border-b-0 p-3">
               <ListItemPrefix>
@@ -92,23 +98,18 @@ export default function Sidebar() {
             <RiSparkling2Fill />
           </ListItemPrefix>
           Assistant
-          {/* <ListItemSuffix>
-            <Chip value="14" size="sm" variant="ghost" color="blue-gray" className="rounded-full" />
-          </ListItemSuffix> */}
-        </ListItem>
-        </a>
-        <ListItem className="text-black dark:text-white text-sm font-poppinsLight tracking-wider ">
+        
+         </ListItem>
+        </a >
+        <a href="/profile">
+          <ListItem className="text-black dark:text-white text-sm font-poppinsLight tracking-wider ">
           <ListItemPrefix>
             <UserCircleIcon className="h-5 w-5" />
           </ListItemPrefix>
           Profile
         </ListItem>
-        <ListItem className="text-black dark:text-white text-sm font-poppinsLight tracking-wider ">
-          <ListItemPrefix>
-            <Cog6ToothIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Settings
-        </ListItem>
+        </a>
+      
         
       </List>
   
