@@ -12,7 +12,7 @@ import {
   IconButton,
   Card,
 } from "@material-tailwind/react";
-import NavbarComp from "../../../components/NavbarComp";
+import NavbarComp from "../../Homepage/components/NavbarComp";
 
 function MainLanding() {
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ function MainLanding() {
            color="blue-gray"
            className=""
          >
-           <a href="#" className="flex font-poppinsRegular dark:text-gray-400  items-center" onClick={handlenavigation2}>
+           <a href="/aboutus" className="flex font-poppinsRegular dark:text-gray-400  items-center" onClick={handlenavigation2}>
              About
            </a>
          </Typography>

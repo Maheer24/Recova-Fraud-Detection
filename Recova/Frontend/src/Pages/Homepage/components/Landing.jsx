@@ -15,6 +15,13 @@ const navigation = [
   { name: 'Company', href: '#' },
 ]
 
+const fadeInUp = {
+  initial: { opacity: 0, y: 40 },
+  whileInView: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, ease: "easeOut" },
+  viewport: { amount: 0.2 },
+};
+
 export default function Landing() {
     const navigate = useNavigate();
 
@@ -72,7 +79,7 @@ export default function Landing() {
               >
                 Get started
               </button>
-              <a href="#" className="text-sm/6 font-poppinsMedium dark:text-white text-gray-900 rounded-[5px] p-[5px] px-4 outline-none focus:outline-none hover:outline hover:outline-[1px] hover:outline-primary transition-all duration-200">
+              <a href="/aboutus" className="text-sm/6 font-poppinsMedium dark:text-white text-gray-900 rounded-[5px] p-[5px] px-4 outline-none focus:outline-none hover:outline hover:outline-[1px] hover:outline-primary transition-all duration-200">
                 Learn more <span aria-hidden="true">→</span>
               </a>
             </div>
