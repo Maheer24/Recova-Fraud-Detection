@@ -9,6 +9,7 @@ import Success from './Pages/PricingPage/components/Success';
 import Cancel from './Pages/PricingPage/components/Cancel';
 import AiPage from './Pages/AI/AiPage';
 import HelpPage from './Pages/Help/HelpPage';
+import AboutPage from './Pages/AboutPage/AboutPage';
 
 
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<HomePage></HomePage>}>  </Route>
         <Route path="/login" element={<LoginPage></LoginPage>}>  </Route>
         <Route path="/signup" element={<SignupPage></SignupPage>}>  </Route>
+        <Route path="/aboutus" element={<AboutPage></AboutPage>}>  </Route>
         <Route path="/pricing" element={<PricingPage></PricingPage>}>  </Route>
         <Route path="/success" element={<Success></Success>}>  </Route>
         <Route path="/cancel" element={<Cancel></Cancel>}>  </Route>

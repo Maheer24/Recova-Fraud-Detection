@@ -34,7 +34,8 @@ app.add_middleware(
 )
 
 # Load the trained model
-model_path = r"C:\Users\HP\Desktop\Python\Data_Science_Projects\fradulent-transaction-detection\model\pipeline1.pkl"
+# model_path = r"C:\Users\HP\Desktop\Python\Data_Science_Projects\fradulent-transaction-detection\model\pipeline1.pkl"
+model_path = r"C:\Recovaa\Recova-Fraud-Detection\fradulent-transaction-detection\model\pipeline1.pkl"
 
 transaction_type_detection_model = dill.load(
     open(

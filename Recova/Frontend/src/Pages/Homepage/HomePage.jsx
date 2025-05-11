@@ -79,7 +79,7 @@ function HomePage() {
           color="blue-gray"
           className=""
         >
-          <a href="#" className="flex font-poppinsRegular dark:text-gray-400 items-center">
+          <a href="/aboutus" className="flex font-poppinsRegular dark:text-gray-400 items-center">
             About
           </a>
         </Typography>
