@@ -4,11 +4,15 @@ import Sidebar  from '../../../components/Sidebar';
 import { IoArrowUpOutline } from "react-icons/io5";
 import { CiNoWaitingSign } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
+import { useThemeContext } from "../../../context/ThemeContext";
+
 
 
 
 function ProfileContent() {
   const navigate = useNavigate()
+
+  const { darkMode, toggleDarkMode } = useThemeContext();
 
 
   const nexttab = () => {
@@ -36,7 +40,7 @@ function ProfileContent() {
  
      
        
-         <div className= ' relative dark:bg-[#15213f] overflow-x-hidden  w-full h-screen'>
+         <div className= {`relative dark:bg-[#15213f] overflow-x-hidden  w-full h-screen ${darkMode ? "dark" : ""}`}>
         <Sidebar/>
           <div className='w-full h-[25%] '> <h1 className='text-gray-700 absolute left-72 top-14  text-3xl  font-poppinsMedium tracking-wider dark:text-white  '> Welcome!</h1></div>
           <div className='w-full h-[75%] bg-white dark:bg-secondary  '>
@@ -54,7 +58,7 @@ function ProfileContent() {
         <input
           type="text"
           placeholder="Ask about our website..."
-          className='w-[920px] h-full dark:bg-secondary  rounded-lg p-4 focus:outline-none outline-none text-wrap overflow-y-auto font-poppinsRegular  hover:border-primary transition-all duration-[.3s] ease-in-out '
+          className='w-[920px] h-full dark:bg-secondary dark:text-gray-300  rounded-lg p-4 focus:outline-none outline-none text-wrap overflow-y-auto font-poppinsRegular  hover:border-primary transition-all duration-[.3s] ease-in-out '
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
           required

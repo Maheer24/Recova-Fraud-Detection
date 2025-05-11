@@ -10,15 +10,16 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import stripepic from '../../../assets/stripe-logo.png'
 import payfastpic from '../../../assets/payfast.png'
 import { useNavigate } from 'react-router-dom';
+import { useThemeContext } from '../../../context/ThemeContext.jsx';
 
 const tiers = [
   {
-    name: 'Hobby',
+    name: '',
     id: 'tier-hobby',
     href: '#',
-    priceMonthly: '$29',
+    priceMonthly: '$0',
     description: "The perfect plan if you're just getting started with our product.",
-    features: ['25 products', 'Up to 10,000 subscribers', 'Advanced analytics', '24-hour support response time'],
+    features: ['Basic fraud detection (limited ruleset)', 'Access to manual review interface', 'Access to download PDF files', 'Community support (via email/forum)'],
     featured: false,
     free:true,
   },
@@ -26,15 +27,15 @@ const tiers = [
     name: 'Enterprise',
     id: 'tier-enterprise',
     href: '#',
-    priceMonthly: '$99',
-    description: 'Dedicated support and infrastructure for your company.',
+    priceMonthly: '$20',
+    description: 'Advanced tools for businesses that need deeper insights and automation.',
     features: [
-      'Unlimited products',
-      'Unlimited subscribers',
-      'Advanced analytics',
-      'Dedicated support representative',
-      'Marketing automations',
-      'Custom integrations',
+      'Real-time fraud detection',
+      'AI-enhanced fraud scoring',
+      'Advanced analytics and detailed reports',
+      'Detailed insights',
+      'Team collaboration support',
+      'Priority support (within 24h)',
     ],
     featured: true,
     free:false,
@@ -49,6 +50,7 @@ function classNames(...classes) {
 const stripePromise = loadStripe('pk_test_51RAHHuPEbCDf85gwAZm91b8i5E4YMW3HK0FbkTL5dcocO672uYNrioe4FH76NtNBRTVczjlEldGzZWEsiEjhLfZf00o0AjFSAq');
 
 const handleClick = async () => {
+
   try {
     // Make a POST request to your backend to create a checkout session
     const res = await axios.post('http://localhost:3000/create-checkout-session');
@@ -87,6 +89,7 @@ const handlePayment = async () => {
 
 
 export default function Pricing() {
+    const { darkMode } = useThemeContext();
    const [logout, setlogout] = useState(false)
     const [opendialog, setopendialog] = useState(true)
 
@@ -100,7 +103,7 @@ export default function Pricing() {
     
   return (
     
-    <div className="relative isolate bg-white px-6   sm:py-12 lg:px-8">
+    <div className={`relative isolate dark:bg-secondary bg-white px-6   sm:py-12 lg:px-8 ${darkMode? "dark" : ""}` } >
       
       <div aria-hidden="true" className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl">
       <div
@@ -115,14 +118,14 @@ export default function Pricing() {
 </div>
   <a href="/" className=" w-[3vw]">
                      
-                <IoIosArrowRoundBack className="text-[2vw] text-black"/>
+                <IoIosArrowRoundBack className="text-[2vw] dark:text-gray-300 text-black"/>
                       </a>
       <div className="mx-auto  max-w-4xl text-center">
         <p className=" gradient-text1   text-[1.5vw] font-poppinsSemiBold tracking-tight text-balance text-gray-900 sm:text-[3.7vw]">
           Choose the right plan for you !
         </p>
       </div>
-      <p className="mx-auto mt-2 font-semibold font-poppinsLight max-w-2xl text-center text-lg text-gray-600 sm:text-[15px]">
+      <p className="mx-auto mt-2 font-semibold font-poppinsLight max-w-2xl text-center text-lg dark:text-gray-300 text-gray-600 sm:text-[15px]">
         Choose an affordable plan that’s packed with the best features. 
       </p>
       <div className="mx-auto mt- grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-10 sm:gap-y-0 lg:max-w-3xl lg:grid-cols-2">
@@ -141,36 +144,36 @@ export default function Pricing() {
           >
             <h3
               id={tier.id}
-              className={classNames(tier.featured ? 'text-indigo-400' : 'text-indigo-600', 'text-base/7 font-semibold')}
+              className={classNames(tier.featured ? 'text-gray-400' : 'text-indigo-600', 'text-base/7 font-semibold')}
             >
               {tier.name}
             </h3>
             <p className="mt-4 flex items-baseline gap-x-2">
               <span
                 className={classNames(
-                  tier.featured ? 'text-white' : 'text-gray-900',
-                  'text-5xl font-semibold tracking-tight',
+                  tier.featured ? 'text-white' : 'text-gray-950 ',
+                  'text-5xl font-semibold font-poppinsMedium tracking-tight',
                 )}
               >
                 {tier.priceMonthly}
               </span>
-              <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>/month</span>
+              <span className={classNames(tier.featured ? 'text-gray-300 font-poppinsMedium' : 'text-gray-800 font-poppinsMedium', 'text-base')}>/month</span>
             </p>
-            <p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-6 text-base/7')}>
+            <p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600 ', 'mt-6 font-poppinsMedium text-base/7')}>
               {tier.description}
             </p>
             <ul
               role="list"
               className={classNames(
-                tier.featured ? 'text-gray-300' : 'text-gray-600',
-                'mt-8 space-y-3 text-sm/6 sm:mt-10',
+                tier.featured ? 'text-gray-300 ' : 'text-gray-600',
+                'mt-8 space-y-3 font-poppinsMedium text-sm/6 sm:mt-10',
               )}
             >
               {tier.features.map((feature) => (
                 <li key={feature} className="flex gap-x-3">
                   <CheckIcon
                     aria-hidden="true"
-                    className={classNames(tier.featured ? 'text-indigo-400' : 'text-indigo-600', 'h-6 w-5 flex-none')}
+                    className={classNames(tier.featured ? 'text-indigo-400 font-poppinsMedium' : 'text-indigo-600 font-poppinsMedium', 'h-6 w-5 flex-none')}
                   />
                   {feature}
                 </li>
@@ -181,19 +184,19 @@ export default function Pricing() {
               aria-describedby={tier.id}
               className={classNames(
                 tier.featured
-                  ? 'bg-indigo-500 text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-indigo-500'
-                  : 'text-indigo-600 ring-1 ring-indigo-200 ring-inset hover:ring-indigo-300 focus-visible:outline-indigo-600',
+                  ? 'bg-indigo-500 tracking-wider text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-indigo-500'
+                  : 'text-indigo-600 tracking-wider ring-1 ring-indigo-200 ring-inset hover:ring-indigo-300 focus-visible:outline-indigo-600',
                 'mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10',
               )}
             >
 
               {tier.free ? (
-                 <button onClick={()=>navigate('/profile')} className='w-full'>
+                 <button onClick={()=>navigate('/profile')} className='w-full font-poppinsMedium'>
               Start your free trial! 
               </button> 
 
               ):(
-                 <button onClick={openmodal} className='w-full'>
+                 <button onClick={openmodal} className='w-full font-poppinsMedium'>
               Get started today
               </button> 
 

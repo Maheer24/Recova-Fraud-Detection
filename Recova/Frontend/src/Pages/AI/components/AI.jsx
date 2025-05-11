@@ -75,10 +75,10 @@ const navList = (
 
       
   return (
-    <div className='overflow-hidden mt-12 w-full'>
+    <div className='overflow-hidden dark:bg-secondary mt-12 w-full'>
          <NavbarComp  >
-        <div className=" shadow-md dark:[#121212]  w-full mt-[.1vw] overflow-hidden ">
-          <Navbar className="fixed top-0 z-50 border-none bg-white dark:bg-black h-max max-w-full  rounded-none px-5 py-1 lg:px-10 ">
+        <div className=" shadow-md dark:bg-secondary w-full mt-[.1vw] overflow-hidden ">
+          <Navbar className="fixed top-0 z-50 border-none bg-white dark:bg-[#212121] h-max max-w-full  rounded-none px-5 py-1 lg:px-10 ">
             <div className="flex items-center justify-between dark:[#121212] text-blue-gray-900 w-full">
                 <Typography
                                  className="mr-4 cursor-pointer py-1.5 text-lg font-bold  text-black"

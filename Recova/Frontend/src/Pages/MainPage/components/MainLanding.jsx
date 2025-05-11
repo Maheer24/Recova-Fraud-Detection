@@ -27,6 +27,13 @@ function MainLanding() {
       navigate("/login");
     }
   }
+  const handlenavigation2 = () => {
+    if(!token){
+      console.log("please login first!")
+
+      navigate("/profile");
+    }
+  }
 
   useEffect(() => {
     window.addEventListener(
@@ -45,7 +52,7 @@ function MainLanding() {
            color="blue-gray"
            className=""
          >
-           <a href="#" className="flex font-poppinsRegular dark:text-gray-400  items-center">
+           <a href="#" className="flex font-poppinsRegular dark:text-gray-400  items-center" onClick={handlenavigation2}>
              About
            </a>
          </Typography>
@@ -75,7 +82,7 @@ function MainLanding() {
            color="blue-gray"
            className="p-1 "
          >
-           <a href="#" className="flex font-poppinsRegular dark:text-gray-400   items-center">
+           <a href="/help" className="flex font-poppinsRegular dark:text-gray-400   items-center">
              Help
            </a>
          </Typography>

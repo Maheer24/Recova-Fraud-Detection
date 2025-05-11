@@ -8,6 +8,7 @@ import PricingPage from './Pages/PricingPage/PricingPage';
 import Success from './Pages/PricingPage/components/Success';
 import Cancel from './Pages/PricingPage/components/Cancel';
 import AiPage from './Pages/AI/AiPage';
+import HelpPage from './Pages/Help/HelpPage';
 
 
 
@@ -23,6 +24,8 @@ function App() {
         <Route path="/success" element={<Success></Success>}>  </Route>
         <Route path="/cancel" element={<Cancel></Cancel>}>  </Route>
         <Route path="/ai" element={<AiPage></AiPage>}>  </Route>
+        <Route path="/help" element={<HelpPage></HelpPage>}>  </Route>
+     
      
         <Route path="*" element={<h1>404 Not Found</h1>} />
 

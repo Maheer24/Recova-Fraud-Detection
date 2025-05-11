@@ -26,6 +26,10 @@ import Modal from "../../../components/Modal";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import Loader from "../../../components/Loader";
+import MaterialUISwitch from "../../../components/MaterialUISwitch";
+import { useThemeContext } from "../../../context/ThemeContext";
+
+
 
 function UserProfile() {
   const [userinfo, setuserinfo] = useState(null);
@@ -35,6 +39,8 @@ function UserProfile() {
    const [opendialog, setopendialog] = useState(true)
    const [loading, setloading] = useState(true)
    const navigate = useNavigate();
+
+   const { darkMode, toggleDarkMode } = useThemeContext();
 
  
   useEffect(() => {
@@ -197,25 +203,22 @@ function UserProfile() {
             <MdFormatPaint fontSize="large" className="iconscolor " />
           </ListItemIcon>
           <p className="dropdown ">Themes</p>
+
+            <div>
+      
+        {/* <button onClick={toggleDarkMode} className="ml-4 px-4 py-2 border rounded">
+        {darkMode ? 'Light Mode' : 'Dark Mode'}
+      </button> */}
+
+      <MaterialUISwitch checked={darkMode} onChange={toggleDarkMode} />
+      </div>
           
 
-          <div>
-         
-          </div>
+          
         </MenuItem>
 
-        <MenuItem>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" className="iconscolor " />
-          </ListItemIcon>
-          <p className="dropdown ">Add another account</p>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <Settings className="iconscolor " fontSize="small" />
-          </ListItemIcon>
-          <p className="dropdown "> Settings</p>
-        </MenuItem>
+       
+    
         <MenuItem onClick={openmodal} >
         {logout && <Modal>
       <Dialog open={opendialog} onClose={closeModal} className="relative z-10">
