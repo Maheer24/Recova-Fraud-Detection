@@ -135,7 +135,7 @@ const FileUpload = ({ setData, setFilename }) => {
       </label>
       <span className="filename">{file?.name || "No file chosen"}</span>
       <button
-        className="ml-5 bg-primary text-gray-200 px-4 py-2 rounded-md rounded disabled:opacity-50"
+        className="ml-5 bg-primary text-gray-200 px-4 py-2 rounded-md  disabled:opacity-50"
         onClick={handleUpload}
         disabled={loading}
       >
