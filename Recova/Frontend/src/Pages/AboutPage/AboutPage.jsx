@@ -33,17 +33,14 @@ function AboutPage() {
 
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col dark:text-white text-secondary lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-7">
+         <Typography as="li" variant="small">
+        <a href="/" className="flex font-poppinsRegular dark:text-gray-400 items-center">Home</a>
+      </Typography>
       <Typography as="li" variant="small">
         <a href="/aboutus" className="flex font-poppinsRegular dark:text-gray-400 items-center">About</a>
       </Typography>
       <Typography as="li" variant="small">
-        <a href="#" className="flex font-poppinsRegular dark:text-gray-400 items-center">Account</a>
-      </Typography>
-      <Typography as="li" variant="small">
-        <a href="#" onClick={handlePricingNavigate} className="flex font-poppinsRegular dark:text-gray-400 items-center">Pricing</a>
-      </Typography>
-      <Typography as="li" variant="small">
-        <a href="#" className="flex font-poppinsRegular dark:text-gray-400 items-center">Help</a>
+        <a href="/help" className="flex font-poppinsRegular dark:text-gray-400 items-center">Help</a>
       </Typography>
     </ul>
   );
@@ -52,7 +49,7 @@ function AboutPage() {
     <div className="w-full min-h-screen text-white">
       {/* Navbar */}
       <div className="shadow-md border-none w-full mt-[.1vw] overflow-hidden">
-        <Navbar className="fixed top-0 z-50 border-none dark:bg-secondary h-max max-w-full rounded-none px-10">
+        <Navbar className="fixed top-0 z-50 border-none dark:bg-secondary h-max max-w-full rounded-none px-24">
           <div className="flex items-center justify-between text-blue-gray-900">
             <Typography as="a" href="/" className="mr-4 cursor-pointer py-1.5 text-lg font-bold text-black">
               <div className="flex justify-center items-center">

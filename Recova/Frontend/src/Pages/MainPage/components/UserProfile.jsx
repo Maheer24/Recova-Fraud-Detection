@@ -273,7 +273,7 @@ function UserProfile() {
     </Dialog>
 
           </Modal>}
-          <ListItemIcon>
+          <ListItemIcon onClick={handleLogout}>
             <Logout className="iconscolor " fontSize="small" />
           </ListItemIcon>
           <p className="dropdown "> Logout</p>

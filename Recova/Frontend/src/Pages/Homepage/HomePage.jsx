@@ -29,7 +29,7 @@ function HomePage() {
       navigate("/login");
   
     }
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
 
     const handlenavigation = () => {
       if(!token){
@@ -41,6 +41,7 @@ function HomePage() {
         navigate("/pricing");
       }
     }
+    const token = localStorage.getItem("token");
 
      const handlenavigation2 = () => {
       if(!token){
@@ -51,6 +52,9 @@ function HomePage() {
       else{
         navigate("/profile");
       }
+
+
+ 
     }
 
      const handlenavigation3 = () => {
@@ -67,7 +71,7 @@ function HomePage() {
 
 
     const handleSignupNavigate = () => {
-      navigate("/login");
+      navigate('/login?signup=true')
   
     }
    
@@ -124,8 +128,7 @@ function HomePage() {
               <Navbar className="fixed top-0 z-50 border-none dark:bg-secondary h-max max-w-full rounded-none px-10   lg:px-10 lg:py-">
                 <div className="flex items-center justify-between text-blue-gray-900">
                   <Typography
-                    as="a"
-                    href="#"
+                    
                     className="mr-4 cursor-pointer py-1.5 text-lg font-bold text-black"
                   >
                     <div className='flex justify-center items-center'>

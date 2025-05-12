@@ -1,7 +1,7 @@
 import { IoIosArrowRoundBack } from "react-icons/io";
 import axios from '../../../config/axios'
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import png from '../../../assets/google.png'
@@ -9,8 +9,10 @@ import { useThemeContext } from "../../../context/ThemeContext";
 
 
 
+
 export default function LoginIn() {
   const [showPassword, setShowPassword] = useState(false);
+ 
 
 
   const handlePasswordVisibility = () => {
@@ -33,6 +35,14 @@ export default function LoginIn() {
 
 
   const navigate = useNavigate()
+ const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const showSignup = queryParams.get('signup') === 'true';
+
+
+useEffect(() => {
+    setIsSignup(showSignup);
+  }, [showSignup]);
 
 
   const submitHandlerlogin = async (e) => {
@@ -111,6 +121,18 @@ const toggleForm = () => {
   setemail("");
   setpassword("");
 };
+  // useEffect(() => {
+  //   // Listen for the Google sign-in success
+  //   window.gapi.load('auth2', () => {
+  //     window.gapi.auth2.init({
+  //       client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with your Google OAuth client ID
+  //     });
+  //   });
+  // }, []);
+
+ 
+
+
 
   return (
     <>
@@ -433,9 +455,10 @@ const toggleForm = () => {
         
                   <p className="mt-4 text-center text-sm/6 font-poppinsRegular text-gray-500"> Or continue with</p>
                   <div className="mt-2 flex gap-2 justify-center items-center">
-               <a  href="http://localhost:3000/auth/google">
+               <a  href='http://localhost:3000/auth/google'>
                <button
                         type="submit"
+                        
                         className="flex hover:bg-gray-300 transition-all duration-300 ease-in-out w-full justify-center tracking-wider rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-gray-500 shadow-xs  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       >
                       <img src={png} className="w-[1.3vw] mt-[.2vw] h-[1.3vw] mr-2" alt="" />
