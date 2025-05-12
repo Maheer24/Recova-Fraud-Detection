@@ -75,7 +75,7 @@ export default function LoginIn() {
           password: password
         }).then((res) => {
           localStorage.setItem("token", res.data.token);
-          navigate('/profile')
+          navigate('/pricing')
         
           console.log(res.data)
   
@@ -419,7 +419,7 @@ const toggleForm = () => {
                         type="submit"
                         className="flex w-full font-poppinsRegular justify-center tracking-wider  rounded-md bg-[#15213f] transition-all ease-in-out duration-200 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       >
-                        Start your free trial!
+                        Sign Up
                       </button>
                     </div>
                   </form>

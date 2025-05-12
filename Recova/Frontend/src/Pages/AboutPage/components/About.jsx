@@ -36,11 +36,11 @@ const About = () => {
       
       {/* Hero Section */}
       <motion.section {...fadeInUp} className="text-center mb-16">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl leading-tight gradient-text1 font-bold font-poppinsMedium">
+        <h1 className="text-3xl h-32 sm:text-4xl md:text-5xl leading-tight gradient-text1 font-bold font-poppinsMedium">
           Empowering Secure <br className="hidden md:block" />
           Transactions with Intelligence
         </h1>
-        <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
           Harnessing the power of machine learning, Recova delivers real-time
           fraud detection to protect your financial operations—before damage is
           done.

@@ -48,7 +48,7 @@ const App = () => {
     <div className={` dark:bg-red-600 `}>
       
       <div className="container dark:bg-secondary">
-        <h2 className="h2 font-poppinsRegular">Fraudulent Transaction Detection</h2>
+        <h2 className="h2 font-poppinsMedium font-bold"><b>Fraudulent Transaction Detection</b></h2>
         <p className="pt-3 text-sm">Upload transaction data to detect anomalies and generate insights</p>
 
         <FileUpload setData={setData} setFilename={setFilename} />
