@@ -96,8 +96,7 @@ function MainLanding() {
           <Navbar className="fixed top-0 z-50 border-none bg-white dark:bg-[#212121] h-max max-w-full  rounded-none px-5 py-1 lg:px-10 ">
             <div className="flex items-center justify-between dark:[#121212] text-blue-gray-900 w-full">
                 <Typography
-                                 as="a"
-                                 href="#"
+                                 
                                  className="mr-4 cursor-pointer py-1.5 text-lg font-bold  text-black"
                                >
                                  <div className='flex justify-center items-center'>

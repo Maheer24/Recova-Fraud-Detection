@@ -92,9 +92,11 @@ app.get("/auth/google/callback",
       secure: false, // true in production with HTTPS
       sameSite: "lax",
     });
+   
 
     // ✅ Now redirect to frontend
-    res.redirect("http://localhost:5173/profile");
+  
+    res.redirect("http://localhost:5173/pricing");
   }
 );
 

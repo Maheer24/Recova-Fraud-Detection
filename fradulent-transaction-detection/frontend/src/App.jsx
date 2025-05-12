@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import FileUpload from "./components/FileUpload";
 import DataTable from "./components/DataTable";
 import { downloadFile, generateImage } from "./services/api";
+import { IoIosArrowRoundBack } from "react-icons/io";
 
 
 
@@ -45,7 +46,15 @@ const App = () => {
 
 
   return (
+  <>
+  
+     <a href="http://localhost:5173/profile" className="   w-[3vw]">
+      
+                <IoIosArrowRoundBack className="mr-[1200px]  dark:bg-secondary dark:text-gray-500 mt-2 text-[2.1vw] font-bold  " />
+              </a>
+  
     <div className={` dark:bg-red-600 `}>
+        
       
       <div className="container dark:bg-secondary">
         <h2 className="h2 font-poppinsMedium font-bold"><b>Fraudulent Transaction Detection</b></h2>
@@ -112,7 +121,7 @@ const App = () => {
           </div>
         )}
       </div>
-    </div>
+    </div></>
 
   );
 };
