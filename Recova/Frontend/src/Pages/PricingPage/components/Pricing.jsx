@@ -72,7 +72,7 @@ const handlePayment = async () => {
   try {
     // Make POST request to the backend to get the redirect URL
     const res = await axios.post('http://localhost:3000/payfast/pay', {
-      amount: '100.00',
+      amount: '20.00',
       name: 'John',
       email: 'john@example.com',
     });
