@@ -17,6 +17,7 @@ import jwt from 'jsonwebtoken';
 
 
 
+
 const stripe = new Stripe(process.env.STRIPE_API_KEY)
 const app = express();
 connectDB();
@@ -27,7 +28,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -122,42 +123,78 @@ app.post('/create-checkout-session', async (req, res) => {
           product_data: {
             name: 'Test Product',
           },
-          unit_amount: 5000, // $50.00
+          unit_amount: 2000, // $50.00
         },
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `${req.headers.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/cancel`,
 
     });
 
     res.json({ sessionId: session.id });
+    
   } catch (err) {
     console.log("error creating checkout session", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-app.get('/success', auth.authuser,async (req, res) => {
+app.get('/success', async (req, res) => {
+ console.log("Request received at /success");
+  // console.log('Request Query:', req.query); // Log the query parameters
+  // console.log('Session ID from query:', req.query.session_id);
   const sessionid = req.query.session_id;
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionid);
+
     if (session.payment_status === 'paid') {
+      // Log the Stripe transaction ID (payment_intent)
+      console.log('Stripe Transaction ID:', session.payment_intent);
+
+      // Optionally, retrieve more details of the PaymentIntent (if needed)
+      // const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent);
+      // console.log('Payment Intent details:', paymentIntent);
+
+      // Redirect to the success page
       res.redirect('http://localhost:5173/success');
-      res.json({ message: 'Payment successful', session });
-    }
-    else {
+    } else {
       res.redirect('http://localhost:5173/cancel');
-      res.status(400).json({ message: 'Payment not completed.' });
     }
 
   } catch (error) {
     console.error('Error retrieving session:', error);
     return res.redirect('http://localhost:5173/login');
-
   }
-})
+});
+
+// app.get('/success', auth.authuser,async (req, res) => {
+//   const sessionid = req.query.session_id;
+//   try {
+//     const session = await stripe.checkout.sessions.retrieve(sessionid);
+//     if (session.payment_status === 'paid') {
+//       res.redirect('http://localhost:5173/success');
+//       res.json({ message: 'Payment successful', session });
+//       console.log('Stripe Transaction ID:', session.payment_intent);
+
+//          const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent);
+//       console.log('Payment Intent details:', paymentIntent);
+
+
+//     }
+
+//     else {
+//       res.redirect('http://localhost:5173/cancel');
+//       res.status(400).json({ message: 'Payment not completed.' });
+//     }
+
+//   } catch (error) {
+//     console.error('Error retrieving session:', error);
+//     return res.redirect('http://localhost:5173/login');
+
+//   }
+// })
 
 
 // app.post('/ask', async (req, res) => {
@@ -197,7 +234,9 @@ app.get('/success', auth.authuser,async (req, res) => {
 // });
 
 
+
 app.post('/payfast/pay', (req, res) => {
+  console.log("its running");
   const { amount, name, email } = req.body;
 
 
@@ -225,8 +264,10 @@ app.post('/payfast/pay', (req, res) => {
 });
 
 app.post('/notify', (req, res) => {
-  // Implement security verification here!
-  console.log('Payment notification received', req.body);
+  const pfPaymentId = req.body.pf_payment_id;     
+  console.log('Payment notification received');
+  console.log('PayFast Transaction ID (pf_payment_id):', pfPaymentId);
+  // Respond to PayFast
   res.status(200).send('OK');
 });
 
