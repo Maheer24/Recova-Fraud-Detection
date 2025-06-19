@@ -140,13 +140,13 @@ const handleKeyPress = (e) => {
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress }
               placeholder="Type your message..."
-              className="flex-1 p-2 border-gray-300 border-[1px] rounded-lg pb-5 mb-20 focus:outline-none   resize-none"
+              className="m-2 flex-1 p-2 border-gray-300 border-[1px] rounded-lg pb-5 mb-20 focus:outline-none   resize-none"
               rows="1"
               aria-label="Message input"
             />
             <button
              onClick={() => handleSendMessage(inputMessage)}
-              className="px-4 py-2 bg-primary  pb-5 mb-20 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="m-2 px-4 py-2 bg-primary  pb-5 mb-20 text-white rounded-lg hover:bg-blue-700 transition-colors"
               aria-label="Send message"
             >
               <FiSend className="w-6 mt-2 h-5 " />
