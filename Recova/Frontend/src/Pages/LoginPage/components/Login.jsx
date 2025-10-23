@@ -363,7 +363,7 @@ const toggleForm = () => {
   
 
   <div className=" w-full h-full  overflow-hidden flex">
-          <div className="w-[60%] h-screen flex items-center justify-center pb-28 text-5xl  font-poppinsSemiBold gradient-text1 bg-[#e0e0e7]  ">
+          <div className="w-[60%] h-screen flex items-center justify-center  pb-28 text-5xl  font-poppinsSemiBold gradient-text1 bg-[#e0e0e7]  ">
             Detect. Prevent. Protect.
             
           </div>
