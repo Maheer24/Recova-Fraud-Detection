@@ -3,7 +3,7 @@ import usermodel from "../models/usermodel.js";
 import * as userservice  from "../services/userservice.js";
 import {generateContent} from "../services/aiservice.js";
 import { validationResult } from "express-validator";
-import redisclient from '../services/redis.js'
+// import redisclient from '../services/redis.js'
 
 
 
