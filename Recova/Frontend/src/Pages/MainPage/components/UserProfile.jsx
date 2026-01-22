@@ -21,6 +21,7 @@ import Logout from "@mui/icons-material/Logout";
 import { MdFormatPaint } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import axios from "../../../config/axios";
+import { supabase } from "../../../services/supabase";
 import pic from "../../../assets/user.png";
 import Modal from "../../../components/Modal";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
@@ -44,28 +45,74 @@ function UserProfile() {
 
  
   useEffect(() => {
-    const fetchProfile = async () => {
-      setloading(true); // Start loading
-  
+    setloading(true);
+    let isMounted = true;
+
+    const getAndSetUser = async () => {
       try {
-        const res = await axios.get("/api/user/profile", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-         
-          withCredentials: true,
-        });
-        setuserinfo(res.data);
-        setprofile(res.data.profilePic || null);
+        // Check if we're coming back from OAuth redirect
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        console.log("🔍 Current session:", session);
+        console.log("🔍 Session error:", error);
+
+        if (isMounted) {
+          if (session?.user) {
+            console.log("✅ User session found, setting profile...");
+            const user = session.user;
+            const userInfo = {
+              email: user.email,
+              name: user.user_metadata?.name || user.user_metadata?.full_name || user.email,
+              profilePic: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+            };
+            setuserinfo(userInfo);
+            setprofile(userInfo.profilePic);
+          } else {
+            console.log("❌ No session found, redirecting to login");
+            navigate("/login", { replace: true });
+          }
+          setloading(false);
+        }
       } catch (err) {
-        console.error("Error fetching user profile:", err);
-        navigate("/login", { replace: true });
-      } finally {
-        setloading(false); // Stop loading
+        console.error("❌ Error getting session:", err);
+        if (isMounted) {
+          navigate("/login", { replace: true });
+          setloading(false);
+        }
       }
     };
-  
-    fetchProfile();
+
+    getAndSetUser();
+
+    // Also listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log("🔍 Auth state changed - Event:", event);
+        
+        if (isMounted) {
+          if (event === 'SIGNED_IN' && session?.user) {
+            console.log("✅ User signed in, setting profile...");
+            const user = session.user;
+            const userInfo = {
+              email: user.email,
+              name: user.user_metadata?.name || user.user_metadata?.full_name || user.email,
+              profilePic: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+            };
+            setuserinfo(userInfo);
+            setprofile(userInfo.profilePic);
+            setloading(false);
+          } else if (event === 'SIGNED_OUT') {
+            console.log("👤 User signed out");
+            navigate("/login", { replace: true });
+          }
+        }
+      }
+    );
+
+    return () => {
+      isMounted = false;
+      subscription?.unsubscribe();
+    };
   }, [navigate]);
   
 
@@ -81,27 +128,21 @@ function UserProfile() {
     e.preventDefault(); // Prevent default form submission behavior
     console.log("Logout button clicked");
     try {
-      const token = localStorage.getItem("token");
-
-      // 🔥 Call backend to logout (regardless of token presence)
-      const response = await axios.get(
-        "http://localhost:3000/api/user/logout",
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : {}, // Send token only if exists
-          withCredentials: true, // Ensures cookies are cleared
-        }
-      );
-      console.log("outside");
-
-      // 🔥 Remove JWT token if exists
-
-      localStorage.removeItem("token");
-      console.log("JWT token removed");
-
-      if (response.data.redirectUrl) {
-        console.log("Redirecting to:", response.data.redirectUrl);
-        window.location.href = response.data.redirectUrl; // Client-side redirection
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error("Supabase logout error:", error);
+        throw error;
       }
+
+      console.log("✅ Logged out from Supabase");
+
+      // Remove any local storage tokens (if you're still using them)
+      localStorage.removeItem("token");
+      
+      // Redirect to login page
+      navigate("/login", { replace: true });
     } catch (err) {
       console.error("Logout failed:", err.message);
       console.log("Error details:", err.response || err);

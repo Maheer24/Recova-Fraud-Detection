@@ -10,6 +10,8 @@ import Cancel from './Pages/PricingPage/components/Cancel';
 import AiPage from './Pages/AI/AiPage';
 import HelpPage from './Pages/Help/HelpPage';
 import AboutPage from './Pages/AboutPage/AboutPage';
+import Wrapper from './wrapper/2FAWrapper'
+import Setup2FA from './Pages/Verification/Setup-2FA';
 
 
 
@@ -17,7 +19,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/profile" element={<MainPage></MainPage>}>  </Route>
+        <Route path="/profile" element={
+          <Wrapper>
+            <MainPage></MainPage>
+          </Wrapper>
+        }>  </Route>
         <Route path="/" element={<HomePage></HomePage>}>  </Route>
         <Route path="/login" element={<LoginPage></LoginPage>}>  </Route>
         <Route path="/signup" element={<SignupPage></SignupPage>}>  </Route>
@@ -27,6 +33,8 @@ function App() {
         <Route path="/cancel" element={<Cancel></Cancel>}>  </Route>
         <Route path="/ai" element={<AiPage></AiPage>}>  </Route>
         <Route path="/help" element={<HelpPage></HelpPage>}>  </Route>
+       
+      <Route path='/setup-2fa' element={<Setup2FA></Setup2FA>}></Route>
      
      
         <Route path="*" element={<h1>404 Not Found</h1>} />

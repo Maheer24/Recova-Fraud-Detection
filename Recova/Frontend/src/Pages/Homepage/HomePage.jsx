@@ -10,8 +10,6 @@ import {
   IconButton,
   Card,
 } from "@material-tailwind/react";
-import image from '../../assets/RECOVA.png'
-import logo from '../../assets/1.png'
 import Footer from '../../components/Footer';
 function HomePage() {
   const [openNav, setOpenNav] = useState(false);
@@ -57,16 +55,16 @@ function HomePage() {
  
     }
 
-     const handlenavigation3 = () => {
-      if(!token){
-        console.log("please login first!")
+    //  const handlenavigation3 = () => {
+    //   if(!token){
+    //     console.log("please login first!")
   
-        navigate("/login");
-      }
-      else{
-        navigate("/pricing");
-      }
-    }
+    //     navigate("/login");
+    //   }
+    //   else{
+    //     navigate("/pricing");
+    //   }
+    // }
   
 
 

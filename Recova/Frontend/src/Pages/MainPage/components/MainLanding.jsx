@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../../../config/axios";
 import UserProfile from "./UserProfile";
 import ProfileContent from "./ProfileContent";
 
@@ -90,10 +89,10 @@ function MainLanding() {
      );
 
   return (
-    <div>
+    <div className="dark:bg-[#0a0a0a] bg-white dark:text-white min-h-screen transition-colors">
       <NavbarComp  >
-        <div className=" shadow-md dark:[#121212]  w-full mt-[.1vw] overflow-hidden ">
-          <Navbar className="fixed top-0 z-50 border-none bg-white dark:bg-[#212121] h-max max-w-full  rounded-none px-5 py-1 lg:px-10 ">
+        <div className="shadow-md w-full mt-[.1vw] overflow-hidden">
+          <Navbar className="fixed top-0 z-50 border-none bg-white dark:bg-[#1a1a1a] h-max max-w-full rounded-none px-5 py-1 lg:px-10 shadow-md dark:shadow-lg">
             <div className="flex items-center justify-between dark:[#121212] text-blue-gray-900 w-full">
                 <Typography
                                  
@@ -162,5 +161,4 @@ function MainLanding() {
     </div>
   );
 }
-
 export default MainLanding;
