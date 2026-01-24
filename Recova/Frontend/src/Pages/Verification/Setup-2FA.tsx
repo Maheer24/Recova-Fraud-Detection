@@ -15,6 +15,7 @@ export default function Setup2FA() {
   const [verificationType, setVerificationType] = useState("authenticator");
   const [needsVerification, setNeedsVerification] = useState(false); // New: for showing verification form
   const [resetting, setResetting] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -365,10 +366,24 @@ export default function Setup2FA() {
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-4">
             Verify Your Identity
           </h2>
-          <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-            Enter the 6-digit code from your authenticator app
-          </p>
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <p className="text-center text-gray-600 dark:text-gray-400">
+              Enter the 6-digit code from your authenticator app
+            </p>
+           
+          </div>
 
+          <div className="flex justify-center mb-4">
+             <button
+              type="button"
+              onClick={() => setShowInfoModal(true)}
+              className="flex-shrink-0 w-56 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors cursor-pointer"
+              title="Why might my code be invalid?"
+            >
+              <span className="text-sm font-bold">Why do i see invalid code error?</span>
+            </button>
+
+          </div>
           <form onSubmit={onVerifySetup} className="space-y-4">
             <div>
               <input
@@ -418,6 +433,76 @@ export default function Setup2FA() {
             </button>
           </div> */}
         </div>
+
+        {/* Info Modal */}
+        {showInfoModal && (
+          <div className="fixed inset-0  flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg  font-bold text-gray-900 dark:text-white">Why might my code be invalid?</h3>
+                  <button
+                    onClick={() => setShowInfoModal(false)}
+                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                  <div className="flex gap-3">
+                    <span className="text-lg">⏱️</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">Code expires every 30 seconds</p>
+                      <p>Use a fresh 6-digit code from your authenticator app each time</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-lg">🕐</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">Time sync issues</p>
+                      <p>Your phone and laptop's clock must be synchronized. Check your device settings</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-lg">🚫</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">Spaces or typos</p>
+                      <p>Enter only 6 digits with no spaces or special characters</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-lg">📱</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">App not synced</p>
+                      <p>Ensure Google Authenticator displays the correct code for Recova</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-lg">🔄</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">Incorrect QR scan</p>
+                      <p>Try refreshing the QR code again</p>
+                    </div>
+                  </div>
+
+                    <div className="flex gap-3">
+                   
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">If still invalid </p>
+                      <p>Repeat the code entering process for 2 to 3 times</p>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowInfoModal(false)}
+                  className="w-full mt-6 bg-primary hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -429,7 +514,7 @@ export default function Setup2FA() {
         <div className="text-center mb-6">
           {/* <p className="text-sm uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 font-semibold">Security</p> */}
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-2">Enable Two-Factor Authentication</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Choose how you want to receive your verification codes.</p>
+          
         </div>
 
         <div className="flex justify-center items-center mb-6">
@@ -515,18 +600,18 @@ export default function Setup2FA() {
                 <button
                   type="button"
                   onClick={regenerateTotp}
-                  className="mt-2 inline-flex items-center px-4 py-2 text-sm font-medium rounded-md border border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 dark:border-gray-600 dark:hover:border-indigo-400 dark:hover:bg-indigo-900/20"
+                  className="mt-2 inline-flex text-gray-600 items-center px-4 py-2 text-sm font-medium rounded-md border border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 dark:border-gray-600 dark:hover:border-indigo-400 dark:hover:bg-indigo-900/20"
                 >
                   Regenerate QR
                 </button>
-                <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg w-full">
+                {/* <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg w-full">
                   <p className="text-xs text-gray-600 dark:text-gray-300 mb-2">
                     Can't scan? Enter this code manually in your authenticator app:
                   </p>
                   <code className="block text-center text-sm font-mono bg-white dark:bg-gray-800 p-2 rounded border break-all">
                     {secret}
                   </code>
-                </div>
+                </div> */}
               </div>
             ) : secret ? (
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 p-6 rounded-lg w-full">
@@ -556,9 +641,19 @@ export default function Setup2FA() {
 
           {/* Step 3 */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <div className="flex justify-between mb-4 space-x-8">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Step 3: Verify Setup
             </h3>
+              <button
+                    type="button"
+                    onClick={() => setShowInfoModal(true)}
+                    className="flex-shrink-0  w-56 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors cursor-pointer"
+                    title="Why might my code be invalid?"
+                  >
+                    <span className="text-sm font-bold">Why my code is always invalid?</span>
+                  </button>
+          </div>
             <form onSubmit={onVerifySetup} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -599,14 +694,77 @@ export default function Setup2FA() {
           </div>
         </div>
 
-        <div className="mt-6 text-center">
+        {/* Info Modal */}
+        {showInfoModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Why do I see invalid code everytime I enter it?</h3>
+                  <button
+                    onClick={() => setShowInfoModal(false)}
+                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                  <div className="flex gap-3">
+                    <span className="text-lg">⏱️</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">Code expires every 30 seconds</p>
+                      <p>Use a fresh 6-digit code from your authenticator app each time</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-lg">🕐</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">Time sync issues</p>
+                      <p>Your phone and laptop's clock might not be synchronized. Check your device settings</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <span className="text-lg">🚫</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">Spaces or typos</p>
+                      <p>Enter only 6 digits with no spaces or special characters</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-lg">📱</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">App not synced</p>
+                      <p>Ensure Google Authenticator displays the correct code for Recova</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-lg">🔄</span>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">Incorrect QR scan</p>
+                      <p>Try refreshing the QR code again</p>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowInfoModal(false)}
+                  className="w-full mt-6 bg-primary hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                >
+                  Got it
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* <div className="mt-6 text-center">
           <a 
             href="/pricing" 
             className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary"
           >
             Skip for now
           </a>
-        </div>
+        </div> */}
       </div> }
 
 
