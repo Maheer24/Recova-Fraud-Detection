@@ -3,7 +3,7 @@ import usermodel from "../models/usermodel.js";
 import * as userservice  from "../services/userservice.js";
 import {generateContent} from "../services/aiservice.js";
 import { validationResult } from "express-validator";
-// import redisclient from '../services/redis.js'
+import redisclient from '../services/redis.js'
 
 
 
@@ -150,5 +150,74 @@ export const getaicontroller= async (req,res)=>{
    
    
 }
+
+// 2FA rate limiting endpoints
+export const check2FAAttempt = async (req, res) => {
+    const { email, userId } = req.body;
+    const identifier = email || userId || req.ip;
+    
+    try {
+        const key = `2fa:attempts:${identifier}`;
+        const attempts = await redisclient.get(key);
+        const count = parseInt(attempts || "0");
+        
+        if (count >= 5) {
+            const ttl = await redisclient.ttl(key);
+            return res.status(429).json({
+                allowed: false,
+                retryAfter: ttl > 0 ? ttl : 60,
+                message: `Too many incorrect attempts. Wait ${ttl > 0 ? ttl : 60} seconds.`
+            });
+        }
+        
+        // Just check, don't increment yet
+        return res.status(200).json({ 
+            allowed: true, 
+            attemptsRemaining: Math.max(0, 5 - count) 
+        });
+    } catch (error) {
+        console.error("2FA check error:", error);
+        return res.status(200).json({ allowed: true }); // fail-open
+    }
+};
+
+export const recordFailedAttempt = async (req, res) => {
+    const { email, userId } = req.body;
+    const identifier = email || userId || req.ip;
+    
+    try {
+        const key = `2fa:attempts:${identifier}`;
+        const newCount = await redisclient.incr(key);
+        if (newCount === 1) {
+            await redisclient.expire(key, 60); // 60 second cooldown window
+        }
+        
+        // If user just hit the limit (5th attempt), reset TTL to full 60 seconds
+        if (newCount === 5) {
+            await redisclient.expire(key, 60);
+        }
+        
+        return res.status(200).json({ 
+            attemptsRemaining: Math.max(0, 5 - newCount) 
+        });
+    } catch (error) {
+        console.error("Record failed attempt error:", error);
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+
+export const clear2FAAttempts = async (req, res) => {
+    const { email, userId } = req.body;
+    const identifier = email || userId || req.ip;
+    
+    try {
+        await redisclient.del(`2fa:attempts:${identifier}`);
+        return res.status(200).json({ success: true });
+    } catch (error) {
+        console.error("Clear attempts error:", error);
+        return res.status(500).json({ error: error.message });
+    }
+};
 
 

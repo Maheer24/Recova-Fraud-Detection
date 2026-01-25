@@ -2,9 +2,14 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase';
 import QRCode from 'qrcode';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+
 
 
 export default function Setup2FA() {
+  const API_URL = 'http://localhost:3000/api/user';
+
   const [qrCode, setQrCode] = useState("");
   const [secret, setSecret] = useState("");
   const [factorId, setFactorId] = useState("");
@@ -16,6 +21,7 @@ export default function Setup2FA() {
   const [needsVerification, setNeedsVerification] = useState(false); // New: for showing verification form
   const [resetting, setResetting] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [countdown, setCountdown] = useState(0); // Countdown timer for rate limiting
 
   const navigate = useNavigate();
 
@@ -155,6 +161,22 @@ export default function Setup2FA() {
     enrollMFA();
   }, []);
 
+  // Countdown timer effect
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            setError(""); // Clear error when countdown ends
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [countdown]);
+
   const onVerifySetup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -174,23 +196,53 @@ export default function Setup2FA() {
     }
 
     try {
-      console.log("Creating challenge for factor:", factorId);
-      console.log("Code to verify:", verificationCode);
+      const { data: { session } } = await supabase.auth.getSession();
+      const identifier = { 
+        email: session?.user?.email, 
+        userId: session?.user?.id 
+      };
+
+      // 1. Check if user is rate-limited (only checks, doesn't increment)
+      let checkRes;
+      try {
+        checkRes = await axios.post(`${API_URL}/2fa/check-attempt`, identifier);
+      } catch (axiosError: any) {
+        // Handle 429 status (Too Many Requests)
+        if (axiosError.response?.status === 429) {
+          const retryAfter = axiosError.response.data?.retryAfter || 60;
+          setCountdown(retryAfter);
+          setError(`Too many incorrect attempts. Wait ${retryAfter} seconds before trying again.`);
+          setVerificationCode("");
+          return;
+        }
+        throw axiosError;
+      }
+
+      if (!checkRes.data.allowed) {
+        const retryAfter = checkRes.data.retryAfter || 60;
+        setCountdown(retryAfter);
+        setError(checkRes.data.message);
+        setVerificationCode("");
+        return;
+      }
+
+      // console.log("Creating challenge for factor:", factorId);
+      // console.log("Code to verify:", verificationCode);
       
-      // Create a challenge for verification
+      // 2. Create a challenge for verification
       const { data: challenge, error: challengeError } = await supabase.auth.mfa.challenge({
         factorId
       });
 
       if (challengeError) {
-        console.error("Challenge error:", challengeError);
+        // console.error("Challenge error:", challengeError);
         setError(challengeError.message);
         return;
       }
 
-      console.log("Challenge created:", challenge.id);
+      // console.log("Challenge created:", challenge.id);
 
-      // Verify the code to complete enrollment
+      // 3. Verify the code to complete enrollment
       const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
         factorId,
         challengeId: challenge.id,
@@ -198,13 +250,16 @@ export default function Setup2FA() {
       });
 
       if (verifyError) {
+        // Record the failed attempt
+        await axios.post(`${API_URL}/2fa/record-failure`, identifier);
+        const remaining = Math.max(0, 5 - checkRes.data.attemptsRemaining - 1);
+        setError(`Invalid code.`);
+        setVerificationCode("");
         console.error("Verification failed:", verifyError);
-        console.error("Status:", verifyError.status);
-        console.error("Code:", verifyError.code);
-        
-        setError(`Verification failed: ${verifyError.message}. Try deleting the Recova entry from your authenticator, click 'Regenerate QR', and scan the new code.`);
       } else {
-        console.log("Verification successful:", verifyData);
+        // Success - clear attempts and redirect
+        await axios.post(`${API_URL}/2fa/clear-attempts`, identifier);
+        // console.log("Verification successful:", verifyData);
         setSuccess("Verified! Redirecting to profile...");
         setIsEnrolled(true);
         
@@ -215,7 +270,7 @@ export default function Setup2FA() {
       }
     } catch (err: any) {
       console.error("Unexpected error:", err);
-      setError(err.message || "Verification failed");
+      setError(err.response?.data?.message || err.message || "Verification failed");
     }
   };
 
@@ -392,7 +447,8 @@ export default function Setup2FA() {
                 onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="000000"
                 maxLength={6}
-                className="w-full px-4 py-3 text-center text-2xl font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                disabled={countdown > 0}
+                className="w-full px-4 py-3 text-center text-2xl font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 required
                 autoFocus
               />
@@ -400,7 +456,14 @@ export default function Setup2FA() {
 
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded text-sm">
-                {error}
+                {countdown > 0 ? (
+                  <div className="flex items-center justify-between">
+                    <span>Too many incorrect attempts.</span>
+                    <span className="font-bold text-lg">{countdown}s</span>
+                  </div>
+                ) : (
+                  error
+                )}
               </div>
             )}
 
@@ -412,10 +475,10 @@ export default function Setup2FA() {
 
             <button
               type="submit"
-              disabled={verificationCode.length !== 6}
+              disabled={verificationCode.length !== 6 || countdown > 0}
               className="w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Verify Code
+              {countdown > 0 ? `Wait ${countdown}s` : 'Verify Code'}
             </button>
           </form>
 
