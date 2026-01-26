@@ -27,16 +27,13 @@ import {
 } from "@heroicons/react/24/outline";
 import { RiSparkling2Fill } from "react-icons/ri";
 import { MdHomeFilled } from "react-icons/md";
-import { useThemeContext } from "../context/ThemeContext";
+
 import MaterialUISwitch from "./MaterialUISwitch";
-import { useNavigate } from "react-router-dom";
+
  
 export default function Sidebar() {
   const [open, setOpen] = React.useState(0);
-  const [openAlert, setOpenAlert] = React.useState(true);
 
-
-  const { darkMode, toggleDarkMode } = useThemeContext();
  
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
@@ -109,8 +106,14 @@ export default function Sidebar() {
           Profile
         </ListItem>
         </a>
-      
-        
+          {/* <a href="/setup-2fa">
+            <ListItem className="text-black dark:text-white text-sm font-poppinsLight tracking-wider ">
+            <ListItemPrefix>
+              <Cog6ToothIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Security (2FA)
+          </ListItem>
+          </a> */}
       </List>
   
     </Card>

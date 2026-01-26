@@ -1,11 +1,13 @@
 import { IoIosArrowRoundBack } from "react-icons/io";
-import axios from '../../../config/axios'
+
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import png from '../../../assets/google.png'
 import { useThemeContext } from "../../../context/ThemeContext";
+import { supabase } from '../../../services/supabase'
+
 
 
 
@@ -20,21 +22,20 @@ export default function LoginIn() {
   }
   const { darkMode, toggleDarkMode } = useThemeContext();
 
-
+  const [name, setname] = useState('')
   const [email, setemail] = useState('')
   const [password, setpassword] = useState('')
   const [error, seterror] = useState()
   const [success, setsuccess] = useState('')
-  const [loading, setloading] = useState('')
-  const [signup, setsignup] = useState(false)
-  const [login, setlogin] = useState(true)
+  // const [loading, setloading] = useState('')
+  // const [signup, setsignup] = useState(false)
+  // const [login, setlogin] = useState(true)
+  const[isSubmitting, setIsSubmitting] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
 
 
-
-
-
   const navigate = useNavigate()
+
  const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const showSignup = queryParams.get('signup') === 'true';
@@ -47,31 +48,85 @@ useEffect(() => {
 
   const submitHandlerlogin = async (e) => {
     e.preventDefault();
-    seterror("")
-    setsuccess("")
+    // seterror("")
+    // setsuccess("")
 
 
-    axios.post('/api/user/login', {
-      email: email,
-      password: password
-    },
+    // axios.post('/api/user/login', {
+    //   email: email,
+    //   password: password
+    // },
 
-    ).then((res) => {
-      localStorage.setItem("token", res.data.token);
-      navigate("/profile",{ replace: true });
-      console.log(res.data)
-      setsuccess("Login successful")
-      //-----------------------------------
-
-
+    // ).then((res) => {
+    //   localStorage.setItem("token", res.data.token);
+    //   navigate("/profile",{ replace: true });
+    //   console.log(res.data)
+    //   setsuccess("Login successful")
+    //   //-----------------------------------
 
 
-    }).catch((err) => {
-      console.log(err)
-      seterror("Your email or password is incorrect. Try again")
 
 
-    })
+    // }).catch((err) => {
+    //   console.log(err)
+    //   seterror("Your email or password is incorrect. Try again")
+
+
+
+    // })
+   
+  
+
+  if (!email || !password) {
+    alert("Please enter both email and password.");
+    return;
+  }
+
+  if (email.trim() === "" || password.trim() === "") {
+   alert("Email and password cannot be empty.");
+    return;
+  }
+
+  if (!/\S+@\S+\.\S+/.test(email)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+
+  setIsSubmitting(true);
+  try {
+    // 🔹 Supabase equivalent of Firebase’s signInWithEmailAndPassword
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      // Handle Supabase error
+      let errorMessage = "Something went wrong. Please try again.";
+
+      if (error.message.includes("Invalid login credentials")) {
+        errorMessage = "Incorrect email or password.";
+      } else if (error.message.includes("Email not confirmed")) {
+        errorMessage = "Please verify your email first. Check your inbox for the verification link.";
+      }
+
+      alert(errorMessage);
+      return;
+    }
+
+    // After login: if already AAL2 go to profile, otherwise setup 2FA
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aal?.currentLevel === 'aal2') {
+      navigate('/profile');
+    } else {
+      navigate('/setup-2fa');
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Unexpected error occurred. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
 
 
   }
@@ -80,35 +135,105 @@ useEffect(() => {
    const submitHandlersignup = async (e) => {
         e.preventDefault();
        
-         axios.post('/api/user/signup', {
-          email: email,
-          password: password
-        }).then((res) => {
-          localStorage.setItem("token", res.data.token);
-          navigate('/pricing')
+        //  axios.post('/api/user/signup', {
+        //   email: email,
+        //   password: password
+        // }).then((res) => {
+        //   localStorage.setItem("token", res.data.token);
+        //   navigate('/pricing')
         
-          console.log(res.data)
+        //   console.log(res.data)
   
     
     
           
     
-        }).catch((err) => {
-          console.log(err)
+        // }).catch((err) => {
+        //   console.log(err)
         
-        if (err.response && err.response.data.message) {
-            seterror(err.response.data.message); 
-        } 
-        if(password.length < 6){
-          seterror("Password should be at least 6 characters long")
+        // if (err.response && err.response.data.message) {
+        //     seterror(err.response.data.message); 
+        // } 
+        // if(password.length < 6){
+        //   seterror("Password should be at least 6 characters long")
   
-        }
+        // }
       
        
     
         
   
-        })
+        // })
+
+
+   
+
+    // 🧠 Basic validation
+    if (!name || !email || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    // ✉️ Validate email format
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    // ^ Only allows Gmail addresses
+    // If you want to allow all valid emails, use:
+    // /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid Gmail address (e.g. user@gmail.com).");
+      return;
+    }
+
+    // 🔒 Validate password (optional but recommended)
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters long.");
+      return;
+    }
+   
+
+    setIsSubmitting(true);
+
+    try {
+      // ✨ Create user in Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name }, // store custom user metadata (e.g. display name)
+        },
+      });
+
+      if (error) {
+        console.error('Signup error:', error);
+
+        // Friendly copy for common email issues
+        if (error.code === 'unexpected_failure' || error.message?.toLowerCase().includes('confirmation email')) {
+          alert('We could not send the verification email. Please check your Supabase email settings (SMTP) and allowed redirect URLs, then try again.');
+        } else {
+          alert(error.message || 'Signup failed. Please try again.');
+        }
+        return;
+      }
+
+      // Ensure session exists; if email confirmation is disabled, session should be returned, otherwise sign in once
+      if (!data.session) {
+        await supabase.auth.signInWithPassword({ email, password });
+      }
+
+      alert("Signup successful! Let's set up your authenticator app.");
+      navigate('/setup-2fa');
+      setemail('');
+      setpassword('');
+      setname('');
+
+    } catch (error) {
+      console.error('Unexpected signup error:', error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  
   
   
     
@@ -120,6 +245,34 @@ const toggleForm = () => {
   setIsSignup(prev => !prev);
   setemail("");
   setpassword("");
+};
+
+// 🔹 Supabase Google Sign-In Handler
+const handleGoogleSignIn = async (e) => {
+  e.preventDefault();
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/profile`, // Wrapper will enforce 2FA if needed
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+
+    if (error) {
+      console.error('Google sign-in error:', error);
+      alert('Google sign-in failed: ' + error.message);
+      return;
+    }
+
+    console.log('✅ Google sign-in initiated:', data);
+  } catch (error) {
+    console.error('Error during Google sign-in:', error);
+    alert('Something went wrong during Google sign-in');
+  }
 };
   // useEffect(() => {
   //   // Listen for the Google sign-in success
@@ -139,7 +292,7 @@ const toggleForm = () => {
     
        
 
-      <div className={`flex h-full overflow-y-hidden  flex-col dark:bg-secondary justify-center ${darkMode? "dark": ""}`} >
+      <div className={`flex h-full overflow-y-hidden  flex-col bg-white dark:bg-secondary justify-center ${darkMode? "dark": ""}`} >
          <a href="/" className="   w-[3vw]">
 
           <IoIosArrowRoundBack className=" dark:bg-secondary dark:text-gray-300 mt-2 text-[2.1vw] font-bold ml-8 " />
@@ -171,195 +324,6 @@ const toggleForm = () => {
           </div>
         )}
 
-
-
-
-
-        {/* <div className=" w-full h-full  overflow-hidden flex">
-          <div className="w-[60%] h-screen flex items-center justify-center text-5xl  font-poppinsSemiBold gradient-text1 bg-[#e0e0e7]  ">
-            Detect. Prevent. Protect.
-            
-          </div>
-          <div className="w-[50%] relative py-28 h-full">
-             <h1 className='tracking-widest font-opensans absolute top-10 text-4xl left-56 font-semibold text- dark:text-white'>REC<span className='text-[#3730A3]'>✦</span>VA</h1> 
-           
-          <div className="sm:mx-auto sm:w-full  dark:bg-secondary sm:max-w-sm">
-      
-          <h2 className="mt-8 text-center font-poppinsRegular tracking-wider  text-lg dark:text-gray-400 font-bold dark:bg-[#121212] bg-white text-[#15213f] ">
-            Login to your account
-            
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6" onSubmit={submitHandler}>
-            <div>
-              <label htmlFor="email" className="block font-poppinsRegular text-sm/6 dark:text-gray-400 font-medium  text-gray-900">
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  onChange={(e) => setemail(e.target.value)}
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="block w-full rounded-md bg-gray-100 border-[1px] border-gray-200 px-3 py-1.5 text-base text-gray-900  outline-gray-200 placeholder:text-gray-400  sm:text-sm/6"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block font-poppinsRegular dark:text-gray-400 text-sm/6 font-medium text-gray-900">
-                  Password
-                </label>
-               
-               
-              </div>
-              <div className="mt-2 relative">
-                <input
-                  onChange={(e) => setpassword(e.target.value)}
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  autoComplete="current-password"
-                  className="block w-full rounded-md bg-gray-100 border-[1px] border-gray-200 px-3 py-1.5 text-base text-gray-900  outline-gray-200 placeholder:text-gray-400  sm:text-sm/6"
-                />
-
-                <div className={` pl-1 absolute top-2 right-0 mr-3  `} onClick={handlePasswordVisibility}>
-                  {showPassword ? (
-                    <VisibilityOffOutlinedIcon className="text-gray-500 " />
-
-                  ) : (
-                    <VisibilityOutlinedIcon className="text-gray-500" />
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="flex w-full tracking-wider justify-center font-poppinsRegular rounded-md bg-[#15213f]  px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Log in
-              </button>
-            </div>
-          </form>
-
-          <p className="mt-10 text-center font-poppinsRegular text-sm/6 text-gray-500">
-            Don't have an account?{' '}
-            <button onClick={getsignup} className="font-semibold font-poppinsRegular text-[#15213f]  hover:text-indigo-500">
-              Signup here
-            </button>
-
-           
-          </p>
-        </div>
-          </div>
-        </div> */}
-
-
-            
-                <>
-          {/* <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-
-                  <h2 className="mt-10 text-center text-2xl/9 dark:text-gray-400 font-poppinsRegular font-bold tracking- text-gray-900">
-                    Sign in to your account
-                  </h2>
-                </div>
-        
-                <div className="mt-1 sm:mx-auto sm:w-full sm:max-w-sm">
-                  <form action="#" method="POST" className="space-y-6" onSubmit={submitHandler}>
-                    <div>
-                      <label htmlFor="email" className="block font-poppinsRegular dark:text-gray-400 text-sm/6 font-medium  text-gray-900">
-                        Email address
-                      </label>
-                      <div className="mt-2">
-                        <input
-                         onChange={(e) => setemail(e.target.value)}
-                          id="email"
-                          name="email"
-                          type="email"
-                          required
-                          autoComplete="email"
-                          className="block w-full rounded-md bg-gray-100 border-[1px] border-gray-200 px-3 py-1.5 text-base text-gray-900  outline-gray-200 placeholder:text-gray-400  sm:text-sm/6"
-                        />
-                      </div>
-                    </div>
-        
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <label htmlFor="password" className="block font-poppinsRegular dark:text-gray-400 text-sm/6 font-medium text-gray-900">
-                          Password
-                        </label>
-                       
-                        
-                        
-                      </div>
-                   
-                     <div className="mt-2 relative  ">
-                        <input
-                          onChange={(e) => setpassword(e.target.value)}
-                          id="password"
-                          name="password"
-                          type={showPassword ? "text" : "password"}
-                          required
-                          autoComplete="current-password"
-                          className="block w-full rounded-md font-poppinsRegular bg-gray-100 border-[1px] border-gray-200 px-3 py-1.5 text-base text-gray-900  outline-gray-200 placeholder:text-gray-400  sm:text-sm/6"
-                        />
-                        
-                        <div className={` pl-1 absolute top-2 right-0 mr-3  `} onClick={handlePasswordVisibility}>
-                          {showPassword ? (
-                            <VisibilityOffOutlinedIcon className="text-gray-500 " />
-        
-                          ) : (
-                            <VisibilityOutlinedIcon className="text-gray-500" />
-                          )}
-                        </div>
-                        
-                        
-                      </div>
-                      
-                   
-                     
-                    </div>
-        
-                    <div>
-                      <button
-                        type="submit"
-                        className="flex w-full font-poppinsRegular justify-center tracking-wider  rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      >
-                        Start your free trial!
-                      </button>
-                    </div>
-                  </form>
-        
-                  <p className="mt-2 text-center font-poppinsRegular text-sm text-gray-500">
-                    Already have an account?{' '}
-                    <a href="/login" className="font-semibold font-poppinsRegular text-indigo-600 hover:text-indigo-500">
-                      Login here
-                    </a>
-                  </p >
-        
-                  <p className="mt-7 text-center text-sm/6 font-poppinsRegular text-gray-500"> Or continue with</p>
-                  <div className="mt-2 flex gap-2 justify-center items-center">
-               <a  href="http://localhost:3000/auth/google">
-               <button
-                        type="submit"
-                        className="flex hover:bg-gray-300 transition-all duration-300 ease-in-out w-full justify-center tracking-wider rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-gray-500 shadow-xs  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      >
-                      <img src={png} className="w-[1.3vw] mt-[.2vw] h-[1.3vw] mr-2" alt="" />
-                        Google
-                      </button>
-               </a>
-                   
-                  </div>
-                </div> */}
-        </>
   
 
   <div className=" w-full h-full  overflow-hidden flex">
@@ -368,7 +332,7 @@ const toggleForm = () => {
             
           </div>
           <div className="w-[50%] relative py-28 h-full">
-             <h1 className='tracking-widest font-opensans absolute top-10 text-4xl left-56 font-semibold text- dark:text-white'>REC<span className='text-[#3730A3]'>✦</span>VA</h1> 
+             <h1 className='tracking-widest font-opensans absolute top-10 text-4xl left-72 font-semibold text-primary dark:text-white'>REC<span className='text-[#3730A3]'>✦</span>VA</h1> 
            
 
            {isSignup ? (
@@ -379,9 +343,27 @@ const toggleForm = () => {
                     Sign in to your account
                   </h2>
                 </div>
+
+
         
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                  <form action="#" method="POST" className="space-y-6" onSubmit={submitHandlersignup}>
+                  <form action="#" method="POST" name="form" className="space-y-6" onSubmit={submitHandlersignup}>
+                   <div>
+                      <label htmlFor="name" className="block font-poppinsRegular dark:text-gray-400 text-sm/6 font-medium  text-gray-900">
+                        Username
+                      </label>
+                      <div className="mt-2">
+                        <input
+                         onChange={(e) => setname(e.target.value)}
+                          id="name"
+                          name="name"
+                          type="text"
+                          required
+                         
+                          className="block w-full rounded-md bg-gray-100 border-[1px] border-gray-200 px-3 py-1.5 text-base text-gray-900  outline-gray-200 placeholder:text-gray-400  sm:text-sm/6"
+                        />
+                      </div>
+                    </div>
                     <div>
                       <label htmlFor="email" className="block font-poppinsRegular dark:text-gray-400 text-sm/6 font-medium  text-gray-900">
                         Email address
@@ -455,16 +437,14 @@ const toggleForm = () => {
         
                   <p className="mt-4 text-center text-sm/6 font-poppinsRegular text-gray-500"> Or continue with</p>
                   <div className="mt-2 flex gap-2 justify-center items-center">
-               <a  href='http://localhost:3000/auth/google'>
                <button
-                        type="submit"
-                        
-                        className="flex hover:bg-gray-300 transition-all duration-300 ease-in-out w-full justify-center tracking-wider rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-gray-500 shadow-xs  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      >
-                      <img src={png} className="w-[1.3vw] mt-[.2vw] h-[1.3vw] mr-2" alt="" />
-                        Google
-                      </button>
-               </a>
+                  onClick={handleGoogleSignIn}
+                  type="button"
+                  className="flex hover:bg-gray-300 transition-all duration-300 ease-in-out w-full justify-center tracking-wider rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-gray-500 shadow-xs  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  <img src={png} className="w-[1.3vw] mt-[.2vw] h-[1.3vw] mr-2" alt="" />
+                  Google
+                </button>
                    
                   </div>
                 </div>

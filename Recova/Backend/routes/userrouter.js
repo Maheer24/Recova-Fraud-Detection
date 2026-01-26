@@ -34,4 +34,9 @@ router.get('/logout' ,usercontroller.logoutController);
 
 router.post('/ask', usercontroller.getaicontroller);
 
+// 2FA rate limiting
+router.post('/2fa/check-attempt', usercontroller.check2FAAttempt);
+router.post('/2fa/record-failure', usercontroller.recordFailedAttempt);
+router.post('/2fa/clear-attempts', usercontroller.clear2FAAttempts);
+
 export default router;

@@ -11,12 +11,21 @@ export const ThemeProvider = ({ children }) => {
     return localStorage.getItem('darkMode') === 'true';
   });
 
- 
+  // Initialize theme on mount
+  useEffect(() => {
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
   useEffect(() => {
     if (darkMode) {
-      document.body.classList.add('dark');
+      document.documentElement.classList.add('dark');
     } else {
-      document.body.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
     }
     localStorage.setItem('darkMode', darkMode);
   }, [darkMode]);
