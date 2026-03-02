@@ -1,8 +1,18 @@
-import  {GoogleGenerativeAI} from "@google/generative-ai";
+import axios from "axios";
+// import { GoogleGenerativeAI } from "@google/generative-ai";
+// import GrokAI from "grok-ai-sdk";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash", 
-    systemInstruction:`
+class AIService {
+  static instance = null;
+
+  constructor() {
+    if (AIService.instance) {
+      return AIService.instance;
+    }
+
+    // Placeholder for Grok API integration. No SDK available. Implement HTTP API call here if Grok provides one.
+    this.grok = null;
+    this.systemInstruction = `
 You are Recova's virtual assistant. Your sole responsibility is to help users understand and use the Recova fraud detection web application.
 
 Recova is a platform where users upload financial documents — such as CSV transaction files — to detect potential fraud using advanced AI analysis. It highlights issues like duplicates, altered amounts, and unusual transaction patterns.
@@ -29,6 +39,7 @@ Your job is to:
 - Accepted Format: **CSV only**
 - Upload Limit: **1 file at a time**
 - Analysis Time: **Typically under 30 seconds**
+-Provides different charts for deep analysis of the transactions.
 - Fraud Score: Indicates how likely the file contains fraudulent activity, based on AI-detected patterns
 
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
@@ -76,21 +87,59 @@ If the user expresses disinterest, do not continue helping unless they ask again
 
 
 
-    `
-});
+    `;
+
+    AIService.instance = this;
+  }
+
+  static getInstance() {
+    if (!AIService.instance) {
+      new AIService();
+    }
+    return AIService.instance;
+  }
+
+  // Groq API call
+  async generateWithGroq(prompt) {
+    const endpoint = "https://api.groq.com/openai/v1/chat/completions";
+    try {
+      const response = await axios.post(
+        endpoint,
+        {
+          model: "llama-3.3-70b-versatile", // Groq available model
+          messages: [
+            { role: "system", content: this.systemInstruction },
+            { role: "user", content: prompt }
+          ],
+          stream: false,
+          temperature: 0
+        },
+        {
+          headers: {
+            "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      // Only trim whitespace; frontend handles formatting
+      return (response.data.choices[0].message.content || "").trim();
+    } catch (error) {
+      console.error("Groq API error:", error?.response?.data || error.message);
+      throw new Error("Failed to generate content from Groq API");
+    }
+  }
+}
+
 
 export const generateContent = async (prompt) => {
-    try {
-        // Use the model's generateContent method with the prompt
-        const result = await model.generateContent(prompt); // Assuming 'result' is the AI response
-
-        // Extract text from the result based on the API's structure (adjust as needed)
-        const generatedText = result.response.text(); // Verify that 'result.response.text()' is the correct way to access the text
-
-        return generatedText;  // Return the AI-generated text
-
-    } catch (error) {
-        console.error("Error generating content:", error);  // Log any errors
-        throw new Error('Failed to generate content');  // Optionally rethrow error or return a message
-    }
+  try {
+    const aiService = AIService.getInstance();
+    // Use Groq integration for free, fast LLMs
+    return await aiService.generateWithGroq(prompt);
+  } catch (error) {
+    console.error("Error generating content:", error);
+    throw new Error("Failed to generate content");
+  }
 };
+
+export default AIService;

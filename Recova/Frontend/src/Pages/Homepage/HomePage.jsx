@@ -11,6 +11,7 @@ import {
   Card,
 } from "@material-tailwind/react";
 import Footer from '../../components/Footer';
+import recovalogo from '../../assets/recovalogo.png';
 function HomePage() {
   const [openNav, setOpenNav] = useState(false);
  
@@ -131,7 +132,7 @@ function HomePage() {
                   >
                     <div className='flex justify-center items-center'>
            
-                    <h1 className='tracking-widest font-opensans font-semibold text-2xl dark:text-white'>REC<span className='dark:text-[#3730A3]'>✦</span>VA</h1>
+                    <img className='h-10 w-auto object-contain' src={recovalogo} alt="Recova Logo" />
                     
                     </div>
                   </Typography>

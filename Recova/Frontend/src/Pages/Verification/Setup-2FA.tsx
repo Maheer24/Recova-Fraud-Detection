@@ -418,11 +418,11 @@ export default function Setup2FA() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-secondary px-4">
         <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-poppinsBold text-center text-gray-900 dark:text-white mb-4">
             Verify Your Identity
           </h2>
           <div className="flex items-center justify-center gap-2 mb-6">
-            <p className="text-center text-gray-600 dark:text-gray-400">
+            <p className="text-center font-poppinsMedium text-xs text-gray-600 dark:text-gray-400">
               Enter the 6-digit code from your authenticator app
             </p>
            
@@ -432,10 +432,10 @@ export default function Setup2FA() {
              <button
               type="button"
               onClick={() => setShowInfoModal(true)}
-              className="flex-shrink-0 w-56 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors cursor-pointer"
+              className="flex-shrink-0 w-60 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors cursor-pointer"
               title="Why might my code be invalid?"
             >
-              <span className="text-sm font-bold">Why do i see invalid code error?</span>
+              <span className="text-xs font-poppinsSemiBold">Why do i see invalid code error?</span>
             </button>
 
           </div>
@@ -503,7 +503,7 @@ export default function Setup2FA() {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg  font-bold text-gray-900 dark:text-white">Why might my code be invalid?</h3>
+                  <h3 className="text-lg font-poppinsSemiBold text-gray-900 dark:text-white">Why might my code be invalid?</h3>
                   <button
                     onClick={() => setShowInfoModal(false)}
                     className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -511,48 +511,48 @@ export default function Setup2FA() {
                     ✕
                   </button>
                 </div>
-                <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                <div className="space-y-3 text-xs text-gray-700 dark:text-gray-300">
                   <div className="flex gap-3">
-                    <span className="text-lg">⏱️</span>
+                    
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">Code expires every 30 seconds</p>
-                      <p>Use a fresh 6-digit code from your authenticator app each time</p>
+                      <p className="font-poppinsSemiBold text-gray-900 dark:text-white">Code expires every 30 seconds</p>
+                      <p className="font-poppinsMedium">Use a fresh 6-digit code from your authenticator app each time</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-lg">🕐</span>
+                   
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">Time sync issues</p>
-                      <p>Your phone and laptop's clock must be synchronized. Check your device settings</p>
+                      <p className="font-poppinsSemiBold text-gray-900 dark:text-white">Time sync issues</p>
+                      <p className="font-poppinsMedium">Your phone and laptop's clock must be synchronized. Check your device settings</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-lg">🚫</span>
+                   
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">Spaces or typos</p>
-                      <p>Enter only 6 digits with no spaces or special characters</p>
+                      <p className="font-poppinsSemiBold text-gray-900 dark:text-white">Spaces or typos</p>
+                      <p className="font-poppinsMedium">Enter only 6 digits with no spaces or special characters</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-lg">📱</span>
+                   
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">App not synced</p>
-                      <p>Ensure Google Authenticator displays the correct code for Recova</p>
+                      <p className="font-poppinsSemiBold text-gray-900 dark:text-white">App not synced</p>
+                      <p className="font-poppinsMedium">Ensure Google Authenticator displays the correct code for your email</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-lg">🔄</span>
-                    <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">Incorrect QR scan</p>
-                      <p>Try refreshing the QR code again</p>
-                    </div>
+                   
+                    {/* <div>
+                      <p className="font-poppinsSemiBold text-gray-900 dark:text-white">Incorrect QR scan</p>
+                      <p className="font-poppinsMedium">Try refreshing the QR code again</p>
+                    </div> */}
                   </div>
 
                     <div className="flex gap-3">
                    
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">If still invalid </p>
-                      <p>Repeat the code entering process for 2 to 3 times</p>
+                      <p className="font-poppinsBold pt-7 text-gray-900  dark:text-white">If still invalid </p>
+                      <p className="font-poppinsMedium">Repeat the code entering process for 2 to 3 times</p>
                     </div>
                   </div>
                 </div>
@@ -576,7 +576,7 @@ export default function Setup2FA() {
       <div className="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
         <div className="text-center mb-6">
           {/* <p className="text-sm uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 font-semibold">Security</p> */}
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-2">Enable Two-Factor Authentication</h1>
+          <h1 className="text-3xl font-poppinsBold text-gray-900 dark:text-white mt-2">Enable Two-Factor Authentication</h1>
           
         </div>
 
@@ -588,8 +588,8 @@ export default function Setup2FA() {
                 ? "border-indigo-500 bg-indigo-50 text-indigo-900 dark:bg-indigo-900/40 dark:border-indigo-400"
                 : "border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 dark:border-gray-700 dark:hover:border-indigo-500 dark:hover:bg-indigo-900/30"}`}
           >
-            <span className="text-sm font-semibold">Get your code via</span>
-            <span className="text-xl text-gray-600 dark:text-gray-400">Google Authenticator</span>
+                    <span className="text-xs font-poppinsMedium">Get your code via</span>
+            <span className="text-xl font-poppinsMedium text-gray-600 dark:text-gray-400">Google Authenticator</span>
           </button>
 
           {/* <button
@@ -605,14 +605,14 @@ export default function Setup2FA() {
         </div>
 
         {!verificationType && (
-          <div className="mb-6 text-center text-sm text-gray-600 dark:text-gray-400">
+          <div className="mb-6 text-center text-xs font-poppinsMedium text-gray-600 dark:text-gray-400">
             Select a method above to continue setup.
           </div>
         )}
       </div>
 
         {verificationType==="authenticator" &&   <div className="max-w-2xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-6">
+        <h2 className="text-3xl font-poppinsBold text-center text-gray-900 dark:text-white mb-6">
           Enable Two-Factor Authentication
         </h2>
         
@@ -620,8 +620,8 @@ export default function Setup2FA() {
         {error && !qrCode && (
           <div className="mb-6">
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded">
-              <p className="font-semibold">Error</p>
-              <p className="text-sm mt-1">{error}</p>
+              <p className="font-poppinsSemiBold">Error</p>
+              <p className="text-sm font-poppinsMedium mt-1">{error}</p>
             </div>
             {error.includes("logged in") && (
               <div className="mt-4 text-center">
@@ -639,17 +639,17 @@ export default function Setup2FA() {
         <div className="space-y-6">
           {/* Step 1 */}
           <div className="border-b pb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-poppinsSemiBold text-gray-900 dark:text-white mb-2">
               Step 1: Install Google Authenticator
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-gray-600 dark:text-gray-400 text-xs font-poppinsMedium">
               Download Google Authenticator from the App Store or Google Play Store
             </p>
           </div>
 
           {/* Step 2 */}
           <div className="border-b pb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-lg font-poppinsSemiBold text-gray-900 dark:text-white mb-4">
               Step 2: Scan QR Code
             </h3>
             
@@ -678,7 +678,7 @@ export default function Setup2FA() {
               </div>
             ) : secret ? (
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 p-6 rounded-lg w-full">
-                <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 text-center font-semibold">
+              <p className="text-gray-600 dark:text-gray-400 text-xs font-poppinsMedium mb-3">
                   ⚠️ QR code unavailable. Please enter this code manually in Google Authenticator:
                 </p>
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border-2 border-primary">
@@ -687,10 +687,10 @@ export default function Setup2FA() {
                   </code>
                 </div>
                 <div className="mt-4 text-center">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                  <p className="text-xs font-poppinsMedium text-gray-600 dark:text-gray-400 mb-1">
                     <strong>Account:</strong> Recova App
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500">
+                  <p className="text-xs font-poppinsMedium text-gray-500 dark:text-gray-500">
                     (Copy the code above and paste it into Google Authenticator)
                   </p>
                 </div>
@@ -705,7 +705,7 @@ export default function Setup2FA() {
           {/* Step 3 */}
           <div>
           <div className="flex justify-between mb-4 space-x-8">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <h3 className="text-lg font-poppinsSemiBold text-gray-900 dark:text-white mb-4">
               Step 3: Verify Setup
             </h3>
               <button
@@ -714,12 +714,12 @@ export default function Setup2FA() {
                     className="flex-shrink-0  w-56 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors cursor-pointer"
                     title="Why might my code be invalid?"
                   >
-                    <span className="text-sm font-bold">Why my code is always invalid?</span>
+                    <span className="text-xs font-poppinsSemiBold">Why my code is always invalid?</span>
                   </button>
           </div>
             <form onSubmit={onVerifySetup} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-xs font-poppinsMedium text-gray-700 dark:text-gray-300 mb-2">
                   Enter the 6-digit code from your authenticator app:
                 </label>
                 <input
@@ -735,8 +735,8 @@ export default function Setup2FA() {
 
               {error && (
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded">
-                  {error}
-                  <p className="text-xs mt-1 text-red-600 dark:text-red-300">Tip: Ensure your phone and computer time are correct. Try the next 6‑digit code if it’s about to refresh.</p>
+                  <span className="font-poppinsMedium text-xs">{error}</span>
+                  <p className="text-xs font-poppinsMedium mt-1 text-red-600 dark:text-red-300">Tip: Ensure your phone and computer time are correct. Try the next 6‑digit code if it's about to refresh.</p>
                 </div>
               )}
 
@@ -763,7 +763,7 @@ export default function Setup2FA() {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">Why do I see invalid code everytime I enter it?</h3>
+                  <h3 className="text-lg font-poppinsSemiBold text-gray-900 dark:text-white">Why do I see invalid code everytime I enter it?</h3>
                   <button
                     onClick={() => setShowInfoModal(false)}
                     className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -773,39 +773,39 @@ export default function Setup2FA() {
                 </div>
                 <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
                   <div className="flex gap-3">
-                    <span className="text-lg">⏱️</span>
+                    
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">Code expires every 30 seconds</p>
-                      <p>Use a fresh 6-digit code from your authenticator app each time</p>
+                      <p className="font-poppinsSemiBold  text-gray-900 dark:text-white">Code expires every 30 seconds</p>
+                      <p className="font-poppinsMedium">Use a fresh 6-digit code from your authenticator app each time</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-lg">🕐</span>
+                   
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">Time sync issues</p>
-                      <p>Your phone and laptop's clock might not be synchronized. Check your device settings</p>
+                      <p className="font-poppinsSemiBold text-gray-900 dark:text-white">Time sync issues</p>
+                      <p className="font-poppinsMedium">Your phone and laptop's clock might not be synchronized. Check your device settings</p>
                     </div>
                   </div>
 
                   <div className="flex gap-3">
-                    <span className="text-lg">🚫</span>
+                   
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">Spaces or typos</p>
-                      <p>Enter only 6 digits with no spaces or special characters</p>
+                      <p className="font-poppinsSemiBold text-gray-900 dark:text-white">Spaces or typos</p>
+                      <p className="font-poppinsMedium">Enter only 6 digits with no spaces or special characters</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
                     <span className="text-lg">📱</span>
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">App not synced</p>
-                      <p>Ensure Google Authenticator displays the correct code for Recova</p>
+                      <p className="font-poppinsSemiBold text-gray-900 dark:text-white">App not synced</p>
+                      <p className="font-poppinsMedium">Ensure Google Authenticator displays the correct code for Recova</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-lg">🔄</span>
+                    
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">Incorrect QR scan</p>
-                      <p>Try refreshing the QR code again</p>
+                      <p className="font-poppinsSemiBold text-gray-900 dark:text-white">Incorrect QR scan</p>
+                      <p className="font-poppinsMedium">Try refreshing the QR code again</p>
                     </div>
                   </div>
                 </div>

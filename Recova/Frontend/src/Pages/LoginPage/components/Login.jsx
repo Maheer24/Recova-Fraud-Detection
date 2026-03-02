@@ -7,6 +7,8 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import png from '../../../assets/google.png'
 import { useThemeContext } from "../../../context/ThemeContext";
 import { supabase } from '../../../services/supabase'
+import recovalogo from '../../../assets/recovalogo.png'
+import lock from '../../../assets/lock2.png'
 
 
 
@@ -274,14 +276,6 @@ const handleGoogleSignIn = async (e) => {
     alert('Something went wrong during Google sign-in');
   }
 };
-  // useEffect(() => {
-  //   // Listen for the Google sign-in success
-  //   window.gapi.load('auth2', () => {
-  //     window.gapi.auth2.init({
-  //       client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with your Google OAuth client ID
-  //     });
-  //   });
-  // }, []);
 
  
 
@@ -293,10 +287,14 @@ const handleGoogleSignIn = async (e) => {
        
 
       <div className={`flex h-full overflow-y-hidden  flex-col bg-white dark:bg-secondary justify-center ${darkMode? "dark": ""}`} >
-         <a href="/" className="   w-[3vw]">
+     <div className=" flex flex-row gap-5 pt-3 ">
+          <a href="/" className="w-[3vw] ">
 
-          <IoIosArrowRoundBack className=" dark:bg-secondary dark:text-gray-300 mt-2 text-[2.1vw] font-bold ml-8 " />
+          <IoIosArrowRoundBack className=" dark:bg-secondary dark:text-gray-300 text-2xl font-poppinsBold ml-8 " />
+          
         </a>
+        <p className="font-poppinsMedium ">Back</p>
+     </div>
 
         {error && ( // Show error message if error exists
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mt-0 rounded relative mb-4" role="alert">
@@ -327,12 +325,21 @@ const handleGoogleSignIn = async (e) => {
   
 
   <div className=" w-full h-full  overflow-hidden flex">
-          <div className="w-[60%] h-screen flex items-center justify-center  pb-28 text-5xl  font-poppinsSemiBold gradient-text1 bg-[#e0e0e7]  ">
-            Detect. Prevent. Protect.
-            
+         <div className="flex relative w-[70%] flex-col ">
+           <div className="w-full absolute top-40 flex justify-center pt-32 pb-10 text-5xl font-poppinsSemiBold gradient-text1">
+              Detect. Prevent. Protect.
           </div>
+          <div className="flex-1 flex items-center justify-center opacity-5">
+            <img className="w-full h-auto pb-44 object-contain" src={lock} alt="" />
+          </div>
+         </div>
+
+
+          
           <div className="w-[50%] relative py-28 h-full">
-             <h1 className='tracking-widest font-opensans absolute top-10 text-4xl left-72 font-semibold text-primary dark:text-white'>REC<span className='text-[#3730A3]'>✦</span>VA</h1> 
+
+                  <div className="w-44 h-6 object-contain pb-10 ml-52"><img src={recovalogo} alt="" /></div>
+      
            
 
            {isSignup ? (
