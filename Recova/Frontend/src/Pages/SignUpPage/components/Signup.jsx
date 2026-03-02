@@ -5,6 +5,7 @@ import axios from "../../../config/axios";
 import png from '../../../assets/google.png'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import { supabase} from '../../../services/supabase'
 export default function SignUp()  {
 
 
@@ -18,6 +19,20 @@ export default function SignUp()  {
     const handlePasswordVisibility = () => {
       setShowPassword(!showPassword);
     }
+
+
+  
+
+
+async function signInWithGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      // Where the user goes after they click "Allow" in the Google popup
+      redirectTo: 'http://localhost:5173/profile', 
+    },
+  })
+}
 
   
   
@@ -171,15 +186,16 @@ export default function SignUp()  {
 
           <p className="mt-7 text-center text-sm/6 font-poppinsRegular text-gray-500"> Or continue with</p>
           <div className="mt-2 flex gap-2 justify-center items-center">
-       <a  href="http://localhost:3000/auth/google">
+       
        <button
+       onClick={signInWithGoogle}
                 type="submit"
                 className="flex hover:bg-gray-300 transition-all duration-300 ease-in-out w-full justify-center tracking-wider rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-gray-500 shadow-xs  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
               <img src={png} className="w-[1.3vw] mt-[.2vw] h-[1.3vw] mr-2" alt="" />
                 Google
               </button>
-       </a>
+       
            
           </div>
         </div>

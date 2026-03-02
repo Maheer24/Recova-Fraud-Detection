@@ -9,6 +9,10 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from fastapi.staticfiles import StaticFiles
 import os
+import re
+import hashlib
+from dotenv import load_dotenv
+
 from charts import (
     pie_chart,
     cases_by_location,
@@ -34,8 +38,9 @@ app.add_middleware(
 )
 
 # Load the trained model
-model_path = r"C:\Users\HP\Desktop\Python\Data_Science_Projects\fradulent-transaction-detection\model\pipeline1.pkl"
-# model_path = r"C:\Recovaa\Recova-Fraud-Detection\fradulent-transaction-detection\model\pipeline1.pkl"
+load_dotenv()
+
+model_path = os.getenv("MODEL_PATH")
 
 transaction_type_detection_model = dill.load(
     open(
@@ -46,6 +51,8 @@ transaction_type_detection_model = dill.load(
 
 # Dictionary to store processed dataframe
 processed_df = {}
+file_meta = {}
+last_file_id_by_filename = {}
 
 
 @app.post("/upload_csv")
@@ -55,6 +62,7 @@ async def upload_csv(file: UploadFile = File(...)):
 
         # Check if file is an Excel file
         if file.filename.endswith(".xlsx") or file.filename.endswith(".xls"):
+            file.file.seek(0)
             df = pd.read_excel(file.file)
         else:
             csv_string = content.decode("utf-8")  # converts bytes into a string
@@ -109,10 +117,21 @@ async def upload_csv(file: UploadFile = File(...)):
 
         # print(df.head())
 
-        # processed_df["transaction.csv"] = df
-        processed_df[file.filename] = df
+        file_hash = hashlib.sha256(content).hexdigest()
+        file_id = f"{file.filename}:{file_hash}"
 
-        return JSONResponse(content=df.to_dict(orient="records"))
+        # processed_df["transaction.csv"] = df
+        processed_df[file_id] = df
+        file_meta[file_id] = {"filename": file.filename, "hash": file_hash}
+        last_file_id_by_filename[file.filename] = file_id
+
+        return JSONResponse(
+            content={
+                "data": df.to_dict(orient="records"),
+                "file_id": file_id,
+                "filename": file.filename,
+            }
+        )
 
     except UnicodeDecodeError:
         return JSONResponse(
@@ -124,9 +143,12 @@ async def upload_csv(file: UploadFile = File(...)):
 
 
 @app.get("/download_csv/")
-async def download_csv(filename: str):
+async def download_csv(filename: str = None, file_id: str = None):
     try:
-        if filename not in processed_df:
+        if not file_id and filename:
+            file_id = last_file_id_by_filename.get(filename)
+
+        if not file_id or file_id not in processed_df:
             return JSONResponse(
                 content={"error": "No processed file found with this name"},
                 status_code=400,
@@ -135,7 +157,8 @@ async def download_csv(filename: str):
         #  processed_df = {
         #      "transactions.csv": <Pandas DataFrame>,
         #  }
-        df = processed_df[filename]
+        df = processed_df[file_id]
+        original_name = file_meta.get(file_id, {}).get("filename", filename or "file")
 
         # in memory text buffer (acts as a file) to temporary store the dataframe before sending to user
         output = StringIO()
@@ -146,7 +169,7 @@ async def download_csv(filename: str):
             output,
             media_type="text/csv",
             headers={
-                "Content-Disposition": f"attachment; filename= {filename}_predicted.csv"
+                "Content-Disposition": f"attachment; filename= {original_name}_predicted.csv"
             },
         )
     except Exception as e:
@@ -154,25 +177,79 @@ async def download_csv(filename: str):
 
 
 @app.post("/display_images")
-async def display_images(filename: str):
+async def display_images(
+    filename: str = None,
+    file_id: str = None,
+    force: bool = False,
+    chart: str = None,
+):
     try:
-        df = processed_df[filename]
+        if not file_id and filename:
+            file_id = last_file_id_by_filename.get(filename)
 
-        pie_chart(df)
-        cases_by_location(df)
-        unique_ips_by_category(df)
-        wallet_balance_account_age_bubble_chart(df)
-        deposit_status_pie_chart(df)
-        radar_chart_transaction_profiles(df)
+        if not file_id or file_id not in processed_df:
+            return JSONResponse(
+                content={"error": "No processed file found with this name"},
+                status_code=400,
+            )
 
-        return {
-            "pie_image_url": f"/images/pie_chart.svg",
-            "location_bar_chart_url": f"/images/location_bar_chart.svg",
-            "unique_ips_by_category_url": f"/images/unique_ip_bar_chart.svg",
-            "wallet_balance_account_age_bubble_chart_url": f"/images/wallet_bal_acc_age_bubble_chart.svg",
-            "deposit_status_pie_chart_url": f"/images/deposit_status_pie_chart.svg",
-            "radar_chart_transaction_profiles_url": f"/images/radar_chart_transaction_profiles.svg",
+        df = processed_df[file_id]
+        meta = file_meta.get(file_id, {})
+        original_name = meta.get("filename", filename or "file")
+        file_hash = meta.get("hash", "")
+
+        base_name = re.sub(r"[^a-zA-Z0-9_-]+", "_", os.path.splitext(original_name)[0])
+        hash_suffix = file_hash[:10] if file_hash else "unknown"
+        safe_name = f"{base_name}_{hash_suffix}"
+        output_dir = os.path.join("images", safe_name)
+
+        expected_files = {
+            "pie_image_url": "pie_chart.svg",
+            "location_bar_chart_url": "location_bar_chart.svg",
+            "unique_ips_by_category_url": "unique_ip_bar_chart.svg",
+            "wallet_balance_account_age_bubble_chart_url": "wallet_bal_acc_age_bubble_chart.svg",
+            "deposit_status_pie_chart_url": "deposit_status_pie_chart.svg",
+            "radar_chart_transaction_profiles_url": "radar_chart_transaction_profiles.svg",
         }
+
+        chart_generators = {
+            "pie_image_url": lambda: pie_chart(df, output_dir=output_dir),
+            "location_bar_chart_url": lambda: cases_by_location(df, output_dir=output_dir),
+            "unique_ips_by_category_url": lambda: unique_ips_by_category(
+                df, output_dir=output_dir
+            ),
+            "wallet_balance_account_age_bubble_chart_url": lambda: wallet_balance_account_age_bubble_chart(
+                df, output_dir=output_dir
+            ),
+            "deposit_status_pie_chart_url": lambda: deposit_status_pie_chart(
+                df, output_dir=output_dir
+            ),
+            "radar_chart_transaction_profiles_url": lambda: radar_chart_transaction_profiles(
+                df, output_dir=output_dir
+            ),
+        }
+
+        if chart:
+            if chart not in expected_files:
+                return JSONResponse(
+                    content={"error": "Invalid chart key"},
+                    status_code=400,
+                )
+
+            image_path = os.path.join(output_dir, expected_files[chart])
+            if force or not os.path.exists(image_path):
+                chart_generators[chart]()
+
+            return {chart: f"/images/{safe_name}/{expected_files[chart]}"}
+
+        image_paths = [os.path.join(output_dir, name) for name in expected_files.values()]
+        images_ready = all(os.path.exists(path) for path in image_paths)
+
+        if force or not images_ready:
+            for generator in chart_generators.values():
+                generator()
+
+        return {key: f"/images/{safe_name}/{name}" for key, name in expected_files.items()}
 
         # return {
         #     "pie_image_url": f"/images/{pie_image_url}",

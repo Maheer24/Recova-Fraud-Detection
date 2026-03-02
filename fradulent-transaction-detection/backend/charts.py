@@ -9,11 +9,11 @@ import plotly.graph_objects as go
 
 # C:\Users\HP>pip install kaleido==0.1.0.post1
 
-outfit_bold_path = r"C:\Users\HP\Desktop\Python\Data_Science_Projects\fradulent-transaction-detection\frontend\src\assets\Outfit-Bold.ttf"
-outfit_thin_path = r"C:\Users\HP\Desktop\Python\Data_Science_Projects\fradulent-transaction-detection\frontend\src\assets\Outfit-VariableFont_wght.ttf"
-cabin_path = r"C:\Users\HP\Desktop\Python\Data_Science_Projects\fradulent-transaction-detection\frontend\src\assets\Cabin[wdth,wght].ttf"
-outfit_extra_bold_path = r"C:\Users\HP\Desktop\Python\Data_Science_Projects\fradulent-transaction-detection\frontend\src\assets\Outfit-ExtraBold.ttf"
-open_sans_reg_path = r"C:\Users\HP\Desktop\Python\Data_Science_Projects\fradulent-transaction-detection\frontend\src\assets\OpenSans-Regular.ttf"
+outfit_bold_path = r"C:\Users\Ali\Downloads\Poppins\Poppins-Bold.ttf"
+outfit_thin_path = r"C:\Users\Ali\Downloads\Poppins\Poppins-Thin.ttf"
+cabin_path = r"C:\Users\Ali\Downloads\Poppins\Poppins-Medium.ttf"
+outfit_extra_bold_path = r"C:\Users\Ali\Downloads\Poppins\Poppins-Bold.ttf"
+open_sans_reg_path = r"C:\Users\Ali\Downloads\Poppins\Poppins-Bold.ttf"
 
 open_sans_reg = font_manager.FontProperties(fname=open_sans_reg_path)
 outfit_bold = font_manager.FontProperties(fname=outfit_bold_path)
@@ -22,7 +22,7 @@ cabin = font_manager.FontProperties(fname=cabin_path)
 outfit_extra_bold = font_manager.FontProperties(fname=outfit_extra_bold_path)
 
 
-def pie_chart(df):
+def pie_chart(df, output_dir="images"):
 
     data = df["status"].value_counts().to_dict()
     sorted_data = sorted(data.items(), key=lambda kv: kv[1], reverse=True)
@@ -84,16 +84,16 @@ def pie_chart(df):
         ha="left",
     )
 
-    os.makedirs("images", exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.subplots_adjust(top=0.85)
 
-    image_path = os.path.join("images", "pie_chart.svg")
+    image_path = os.path.join(output_dir, "pie_chart.svg")
     plt.savefig(image_path, format="svg")
     plt.close()
 
 
-def cases_by_location(df):
+def cases_by_location(df, output_dir="images"):
     print("Creating bar chart...")
     counts = df.groupby(["location", "status"]).size().reset_index(name="count")
     print("Define custom colours")
@@ -158,12 +158,12 @@ def cases_by_location(df):
             ),
         ],
     )
-    os.makedirs("images", exist_ok=True)
-    image_path = os.path.join("images", "location_bar_chart.svg")
+    os.makedirs(output_dir, exist_ok=True)
+    image_path = os.path.join(output_dir, "location_bar_chart.svg")
     fig.write_image(image_path, format="svg")
 
 
-def unique_ips_by_category(data):
+def unique_ips_by_category(data, output_dir="images"):
     fig = px.bar(
         data_frame=data,
         width=1450,
@@ -205,12 +205,12 @@ def unique_ips_by_category(data):
         ],
     )
 
-    os.makedirs("images", exist_ok=True)
-    image_path = os.path.join("images", "unique_ip_bar_chart.svg")
+    os.makedirs(output_dir, exist_ok=True)
+    image_path = os.path.join(output_dir, "unique_ip_bar_chart.svg")
     fig.write_image(image_path, format="svg")
 
 
-def wallet_balance_account_age_bubble_chart(data):
+def wallet_balance_account_age_bubble_chart(data, output_dir="images"):
     fig = px.scatter(
         data_frame=data,
         x="account_age_days",
@@ -257,12 +257,12 @@ def wallet_balance_account_age_bubble_chart(data):
             )
         ],
     )
-    os.makedirs("images", exist_ok=True)
-    image_path = os.path.join("images", "wallet_bal_acc_age_bubble_chart.svg")
+    os.makedirs(output_dir, exist_ok=True)
+    image_path = os.path.join(output_dir, "wallet_bal_acc_age_bubble_chart.svg")
     fig.write_image(image_path, format="svg")
 
 
-def deposit_status_pie_chart(data):
+def deposit_status_pie_chart(data, output_dir="images"):
     fig = px.pie(
         data,
         width=1200,
@@ -306,12 +306,12 @@ def deposit_status_pie_chart(data):
         margin=dict(t=100, b=80),
     )
 
-    os.makedirs("images", exist_ok=True)
-    image_path = os.path.join("images", "deposit_status_pie_chart.svg")
+    os.makedirs(output_dir, exist_ok=True)
+    image_path = os.path.join(output_dir, "deposit_status_pie_chart.svg")
     fig.write_image(image_path, format="svg")
 
 
-def radar_chart_transaction_profiles(df):
+def radar_chart_transaction_profiles(df, output_dir="images"):
 
     # 1. Select relevant features
     features = [
@@ -428,12 +428,12 @@ def radar_chart_transaction_profiles(df):
             ),
         ],
     )
-    os.makedirs("images", exist_ok=True)
-    image_path = os.path.join("images", "profile_radar_chart.svg")
+    os.makedirs(output_dir, exist_ok=True)
+    image_path = os.path.join(output_dir, "radar_chart_transaction_profiles.svg")
     fig.write_image(image_path, format="svg")
 
 
-def box_plot(df):
+def box_plot(df, output_dir="images"):
     fig, ax = plt.subplots(figsize=(7, 4))
 
     ax.boxplot(
@@ -486,10 +486,10 @@ def box_plot(df):
         color="gray",
         labelpad=20,
     )
-    os.makedirs("images", exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
 
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.subplots_adjust(top=0.85)
-    image_path = os.path.join("images", "ip_box_plot.svg")
+    image_path = os.path.join(output_dir, "ip_box_plot.svg")
     plt.savefig(image_path, format="svg")
     plt.close()

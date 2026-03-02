@@ -109,7 +109,7 @@ const handleKeyPress = (e) => {
                   : "border-primary border-2 text-black dark:text-gray-100"} 
                   shadow-sm`}
               >
-                <p className="text-sm">{message.text}</p>
+                <pre className="text-sm" style={{whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontFamily: 'inherit', background: 'none', border: 'none', margin: 0, padding: 0}}>{message.text}</pre>
                 <p className="text-xs mt-1 opacity-70">
                   {format(message.timestamp, "HH:mm")}
                 </p>

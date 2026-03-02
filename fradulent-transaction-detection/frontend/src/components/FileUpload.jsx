@@ -93,7 +93,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useThemeContext } from "../context/ThemeContext";
 
-const FileUpload = ({ setData, setFilename }) => {
+const FileUpload = ({ setData, setFilename, setFileId }) => {
   const { darkMode } = useThemeContext();
   
   const [file, setFile] = useState(null);
@@ -117,8 +117,14 @@ const FileUpload = ({ setData, setFilename }) => {
       const response = await axios.post("http://localhost:8000/upload_csv", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setData(response.data);
-      setFilename(file.name);
+      const responseData = response.data || {};
+      const serverData = responseData.data || responseData;
+      const serverFilename = responseData.filename || file.name;
+      const serverFileId = responseData.file_id || serverFilename;
+
+      setData(serverData);
+      setFilename(serverFilename);
+      setFileId(serverFileId);
     } catch (error) {
       console.error("Error uploading file:", error.response?.data || error.message);
       alert(error.response?.data?.error || "Error uploading file");
