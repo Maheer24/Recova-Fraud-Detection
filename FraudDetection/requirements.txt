@@ -1,0 +1,14 @@
+pandas
+scikit-learn
+shap
+plotly
+catboost
+numpy
+matplotlib
+openpyxl
+supabase
+setuptools
+uvicorn
+dotenv
+python-multipart
+#pip install -e .
