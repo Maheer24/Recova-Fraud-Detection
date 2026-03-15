@@ -38,3 +38,17 @@ export const fetchXAI = async (filename) => {
   const response = await axios.post(`${API}/charts/xai/${filename}`);
   return response.data;
 };
+
+export const downloadReport = async (filename) => {
+
+  const response = await axios.get(
+    `${API}/upload_file/download_report/${filename}`,
+    {
+      responseType: "blob"
+    }
+  );
+
+  const baseName = filename.split(".")[0];
+
+  saveAs(response.data, `${baseName}_report.pdf`);
+};

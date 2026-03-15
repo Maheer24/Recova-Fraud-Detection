@@ -9,7 +9,7 @@ const XAICharts = ({ xai }) => {
       <h3>XAI Explanations</h3>
 
       <h4>Global Feature Importance</h4>
-      <Card className="mb-6">
+      <Card className="mb-6 max-w-4xl mx-auto">
         <CardContent>
           <img
             src={`data:image/png;base64,${xai.bar_plot_xai}`}
@@ -21,7 +21,7 @@ const XAICharts = ({ xai }) => {
 
       <h4>Fraudulent Transactions</h4>
       {xai.fraud_waterfall_plots_xai?.map((img, i) => (
-        <Card key={`fraud-${i}`} className="mb-6">
+        <Card key={`fraud-${i}`} className="mb-6 max-w-4xl mx-auto">
           <CardContent>
             <img
               src={`data:image/png;base64,${img.img}`}
@@ -34,7 +34,7 @@ const XAICharts = ({ xai }) => {
 
       <h4>Normal Transactions</h4>
       {xai.normal_waterfall_plots_xai?.map((img, i) => (
-        <Card key={`normal-${i}`} className="mb-6">
+        <Card key={`normal-${i}`} className="mb-6 max-w-4xl mx-auto">
           <CardContent>
             <img
               src={`data:image/png;base64,${img.img}`}

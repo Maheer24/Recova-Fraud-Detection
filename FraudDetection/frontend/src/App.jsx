@@ -7,7 +7,7 @@ import XAICharts from "./components/XAICharts";
 
 import Button from "./ui/Button";
 
-import { downloadFile, fetchCharts, fetchXAI } from "./services/api";
+import { downloadReport, fetchCharts, fetchXAI } from "./services/api";
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -76,10 +76,10 @@ const App = () => {
           </Button>
 
           <Button
-            onClick={() => downloadFile(filename)}
+            onClick={() => downloadReport(filename)}
             className="download-btn"
           >
-            Download File
+            Download Full Report
           </Button>
 
         </div>
