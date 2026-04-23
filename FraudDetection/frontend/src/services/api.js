@@ -52,3 +52,10 @@ export const downloadReport = async (filename) => {
 
   saveAs(response.data, `${baseName}_report.pdf`);
 };
+
+export const fetchExplanations = async (filename) => {
+  const response = await axios.post(
+    `${API}/upload_file/explain/${filename}`
+  );
+  return response.data;
+};

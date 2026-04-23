@@ -11,4 +11,7 @@ setuptools
 uvicorn
 dotenv
 python-multipart
+reportlab
+kaleido
+groq
 #pip install -e .

@@ -8,6 +8,8 @@ import XAICharts from "./components/XAICharts";
 import Button from "./ui/Button";
 
 import { downloadReport, fetchCharts, fetchXAI } from "./services/api";
+import ExplanationCards from "./ui/Explanation_card";
+import { fetchExplanations } from "./services/api";
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -18,6 +20,9 @@ const App = () => {
 
   const [loadingCharts, setLoadingCharts] = useState(false);
   const [loadingXAI, setLoadingXAI] = useState(false);
+
+  const [explanations, setExplanations] = useState(null);
+  const [loadingExplain, setLoadingExplain] = useState(false);
 
   const generateCharts = async () => {
     setLoadingCharts(true);
@@ -35,6 +40,15 @@ const App = () => {
     setXAI(res);
 
     setLoadingXAI(false);
+  };
+
+  const generateExplanation = async () => {
+  setLoadingExplain(true);
+
+  const res = await fetchExplanations(filename);
+  setExplanations(res.results);
+
+  setLoadingExplain(false);
   };
 
   return (
@@ -56,6 +70,15 @@ const App = () => {
 
       {filename && (
         <div className="button-bar">
+
+          <Button
+            onClick={generateExplanation}
+            className="generate-btn"
+          >
+            {loadingExplain
+              ? "Generating Explanation..."
+              : "Explain Predictions"}
+          </Button>
 
           <Button
             onClick={generateCharts}
@@ -84,6 +107,8 @@ const App = () => {
 
         </div>
       )}
+
+      <ExplanationCards explanations={explanations} />
 
       <Charts charts={charts} />
 

@@ -8,8 +8,8 @@ from backend.app.services.pie_chart import pie_chart
 from backend.app.services.sent_received_tnx_bar_chart import sent_received_bar_chart
 from backend.app.services.unique_sent_add_boxplot import unique_sent_addresses_boxplot
 from backend.app.db.supabase_client import supabase
-from backend.app.ml.compute_shap_values import compute_shap_val
-from backend.app.ml.load_model import load_catboost_model
+from backend.app.utils.compute_shap_values import compute_shap_val
+from backend.app.utils.load_model import load_catboost_model
 from backend.app.services.xai_service import XAIService
 from config import MODEL_PATH
 

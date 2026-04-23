@@ -6,7 +6,7 @@ const Charts = ({ charts }) => {
   if (!charts) return null;
 
   return (
-    <div className="insights">
+    <div className="section-title">
       <h3>Insights</h3>
 
       {Object.values(charts).map((chart, index) => {

@@ -5,7 +5,7 @@ const XAICharts = ({ xai }) => {
   if (!xai) return null;
 
   return (
-    <div className="insights">
+    <div className="section-title">
       <h3>XAI Explanations</h3>
 
       <h4>Global Feature Importance</h4>
