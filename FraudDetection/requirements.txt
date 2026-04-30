@@ -2,6 +2,7 @@ pandas
 scikit-learn
 shap
 plotly
+kaleido
 catboost
 numpy
 matplotlib
@@ -11,6 +12,8 @@ setuptools
 uvicorn
 dotenv
 python-multipart
+pymongo
+pypdf
 reportlab
 kaleido
 groq

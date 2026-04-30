@@ -26,10 +26,15 @@ const FileUpload = ({ setData, setFilename }) => {
       setData(response.data);
       setFilename(response.filename);
     } catch (error) {
-      alert("Upload failed");
+      const errorMessage =
+        error?.response?.data?.error ||
+        (error?.code === "ECONNABORTED"
+          ? "Upload timed out. Please try a smaller file or check backend logs."
+          : "Upload failed");
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (

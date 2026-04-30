@@ -12,6 +12,7 @@ import HelpPage from './Pages/Help/HelpPage';
 import AboutPage from './Pages/AboutPage/AboutPage';
 import Wrapper from './wrapper/2FAWrapper'
 import Setup2FA from './Pages/Verification/Setup-2FA';
+import ReportVerifyPage from './Pages/Verification/ReportVerifyPage';
 
 
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/cancel" element={<Cancel></Cancel>}>  </Route>
         <Route path="/ai" element={<AiPage></AiPage>}>  </Route>
         <Route path="/help" element={<HelpPage></HelpPage>}>  </Route>
+        <Route path="/verify/:reportId" element={<ReportVerifyPage></ReportVerifyPage>}>  </Route>
        
       <Route path='/setup-2fa' element={<Setup2FA></Setup2FA>}></Route>
      

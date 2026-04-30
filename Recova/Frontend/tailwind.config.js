@@ -22,6 +22,7 @@ export default {
       colors: {
         primary:  "#223b6d",
         secondary: "#212121",
+        text:'#a8cdf0'
        
       },
 

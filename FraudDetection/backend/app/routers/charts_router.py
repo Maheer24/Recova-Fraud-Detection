@@ -34,14 +34,14 @@ async def generate_charts(filename: str):
         avg_time_between_sent_histogram_dict = avg_time_between_sent_histogram(df)
         ether_sent_histogram_dict = ether_sent_histogram(df)
         sent_received_bar_chart_dict = sent_received_bar_chart(df)
-        unique_sent_addresses_boxplot_dict = unique_sent_addresses_boxplot(df)
+        #unique_sent_addresses_boxplot_dict = unique_sent_addresses_boxplot(df)
 
         return jsonable_encoder({
             "pie_chart": pie_chart_dict,
             "avg_time_hist": avg_time_between_sent_histogram_dict,
             "ether_sent_hist": ether_sent_histogram_dict,
             "sent_rec_bar": sent_received_bar_chart_dict,
-            "unique_sent_box": unique_sent_addresses_boxplot_dict,
+            #"unique_sent_box": unique_sent_addresses_boxplot_dict,
         })
 
     except Exception as e:
