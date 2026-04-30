@@ -8,6 +8,9 @@ import XAICharts from "./components/XAICharts";
 import Button from "./ui/Button";
 
 import { downloadReport, fetchCharts, fetchXAI, verifyPdfReport } from "./services/api";
+import { downloadReport, fetchCharts, fetchXAI } from "./services/api";
+import ExplanationCards from "./ui/Explanation_card";
+import { fetchExplanations } from "./services/api";
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -22,6 +25,9 @@ const App = () => {
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfVerifying, setPdfVerifying] = useState(false);
   const [verification, setVerification] = useState(null);
+
+  const [explanations, setExplanations] = useState(null);
+  const [loadingExplain, setLoadingExplain] = useState(false);
 
   const generateCharts = async () => {
     setLoadingCharts(true);
@@ -82,6 +88,13 @@ const App = () => {
     } finally {
       setPdfVerifying(false);
     }
+  const generateExplanation = async () => {
+  setLoadingExplain(true);
+
+  const res = await fetchExplanations(filename);
+  setExplanations(res.results);
+
+  setLoadingExplain(false);
   };
 
   return (
@@ -105,6 +118,15 @@ const App = () => {
 
       {filename && (
         <div className="button-bar">
+
+          <Button
+            onClick={generateExplanation}
+            className="generate-btn"
+          >
+            {loadingExplain
+              ? "Generating Explanation..."
+              : "Explain Predictions"}
+          </Button>
 
           <Button
             onClick={generateCharts}
@@ -133,6 +155,8 @@ const App = () => {
 
         </div>
       )}
+
+      <ExplanationCards explanations={explanations} />
 
       <Charts charts={charts} />
 

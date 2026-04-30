@@ -1,7 +1,7 @@
 import React from "react";
 
 export const Card = ({ children, className }) => {
-  return <div className={`bg-white shadow-lg rounded-xl p-6 ${className}`}>{children}</div>;
+  return <div className={`bg-white shadow-lg rounded-xl p-1 ${className}`}>{children}</div>;
 };
 
 export const CardContent = ({ children, className }) => {

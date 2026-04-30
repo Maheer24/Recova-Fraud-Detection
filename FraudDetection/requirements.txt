@@ -14,4 +14,7 @@ dotenv
 python-multipart
 pymongo
 pypdf
+reportlab
+kaleido
+groq
 #pip install -e .

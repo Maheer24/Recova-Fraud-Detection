@@ -9,13 +9,11 @@ from fastapi import APIRouter, File, UploadFile
 from fastapi.responses import JSONResponse, StreamingResponse
 from pypdf import PdfReader
 
-from ..utils.load_model import load_catboost_model
-from ..utils.predict import predict_transaction
-from ..utils.preprocess_data import preprocess_input_data
-from ..utils.image_helpers import fetch_transactions, sanitize_plotly_fig, plotly_to_png, add_image_to_pdf, decode_base64_image
-from ..db.supabase_client import supabase
-from ..services.report_service import ReportService
-from ..services.blockchain_service import blockchain_service
+from backend.app.utils.load_model import load_catboost_model
+from backend.app.utils.predict import predict_transaction
+from backend.app.utils.preprocess_data import preprocess_input_data
+from backend.app.utils.image_helpers import fetch_transactions, sanitize_plotly_fig, plotly_to_png, add_image_to_pdf, decode_base64_image
+from backend.app.db.supabase_client import supabase
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet
@@ -24,17 +22,35 @@ from reportlab.lib import colors
 from reportlab.graphics.barcode import qr
 from reportlab.graphics.shapes import Drawing
 
-from ..services.avg_time_sent_tnx_histogram import avg_time_between_sent_histogram
-from ..services.ether_sent_histogram import ether_sent_histogram
-from ..services.pie_chart import pie_chart
-from ..services.sent_received_tnx_bar_chart import sent_received_bar_chart
-from ..services.unique_sent_add_boxplot import unique_sent_addresses_boxplot
-from ..utils.compute_shap_values import compute_shap_val
-from ..services.xai_service import XAIService
+from backend.app.services.avg_time_sent_tnx_histogram import avg_time_between_sent_histogram
+from backend.app.services.ether_sent_histogram import ether_sent_histogram
+from backend.app.services.pie_chart import pie_chart
+from backend.app.services.sent_received_tnx_bar_chart import sent_received_bar_chart
+from backend.app.services.unique_sent_add_boxplot import unique_sent_addresses_boxplot
+from backend.app.utils.compute_shap_values import compute_shap_val
+from backend.app.services.xai_service import XAIService
 
-from ..settings import MODEL_PATH
+from backend.app.services.explanation_service import ExplanationService
+from backend.app.services.prompt_service import build_llm_prompt
+from backend.app.services.llm_service import LLMService
+from backend.app.utils.compute_shap_values import compute_shap_values,compute_shap_val
+from backend.app.services.llm_service import LLMService
+from backend.app.utils.load_baseline import load_baseline
+
+
+
+import os
+import pandas as pd
+import numpy as np
+from io import StringIO, BytesIO
+from config import MODEL_PATH
+from config import BASELINE_PATH
+import json
 
 model = load_catboost_model(MODEL_PATH)
+baseline = load_baseline(BASELINE_PATH) 
+explanation_service = ExplanationService(baseline)
+llm_service = LLMService()
 processed_df = {}
 xai_service = XAIService()
 report_service = ReportService()
@@ -425,43 +441,62 @@ async def download_csv(filename: str):
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+    
 
 
-@router.get("/reports")
-async def get_all_reports(filename: str = None):
-    """Retrieve all saved reports or reports for a specific filename."""
+@router.post("/explain/{filename}")
+async def explain_prediction(filename: str):
+
     try:
-        reports = report_service.get_all_reports(filename=filename)
-        return JSONResponse({"reports": reports}, status_code=200)
+        # fetch data
+        response = (
+            supabase.table("Transactions")
+            .select("*")
+            .eq("uploaded_file", filename)
+            .execute()
+        )
+
+        df = pd.DataFrame(response.data)
+        
+        addresses = df["Address"].copy()
+
+        df = df.drop(columns=["Address"], errors="ignore")
+
+        labels = df["Flag"].copy()
+        
+
+        # SHAP
+        shap_values, clean_df = compute_shap_values(model, df)
+        print("computed shap values")
+        print(clean_df.columns)
+
+        explanations = []
+
+        for i in range(len(clean_df)):
+
+            row = clean_df.iloc[i]
+            pred = labels.iloc[i]
+            address = addresses.iloc[i]
+
+            # build structured SHAP reasoning
+            insights = explanation_service.build_feature_insights(
+                shap_values, row, top_k=4
+            )
+
+            # LLM prompt
+            prompt = build_llm_prompt(insights, pred)
+
+            # LLM output
+            explanation_text = llm_service.explain(prompt)
+
+            explanations.append({
+                "address": address, 
+                "prediction": pred,
+                "explanation": explanation_text,
+                "insights": insights
+            })
+
+        return {"results": explanations}
+
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
-
-
-@router.get("/reports/{report_id}")
-async def get_report(report_id: str):
-    """Retrieve a specific report by ID."""
-    try:
-        report = report_service.get_report(report_id)
-        if "error" in report:
-            return JSONResponse(report, status_code=404)
-        return JSONResponse(report, status_code=200)
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
-
-
-@router.get("/reports/{report_id}/verify")
-async def verify_report_integrity(report_id: str):
-    """Verify report tamper status by comparing Mongo hash with blockchain hash."""
-    try:
-        result = report_service.verify_report_integrity(report_id, blockchain_service)
-        if not result.get("success"):
-            error_text = (result.get("error") or "").lower()
-            if "not found" in error_text:
-                return JSONResponse(result, status_code=404)
-            if "invalid" in error_text:
-                return JSONResponse(result, status_code=400)
-            return JSONResponse(result, status_code=200)
-
-        return JSONResponse(result, status_code=200)
-    except Exception as e:
-        return JSONResponse({"success": False, "error": str(e)}, status_code=500)
