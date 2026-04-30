@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ChatBot from '../../../components/ChatBot'
 import Sidebar from '../../../components/Sidebar'
 import { useNavigate } from 'react-router-dom'
-import image from '../../../assets/recova.png'
+
 
 
 

@@ -13,6 +13,7 @@ import {
 } from "@material-tailwind/react";
 import NavbarComp from "../../Homepage/components/NavbarComp";
 import recovalogo from '../../../assets/recovalogo.png';
+import logo from '../../../assets/logo.png';
 
 function MainLanding() {
   const navigate = useNavigate();
@@ -104,7 +105,7 @@ function MainLanding() {
                                  {/* <img src={image} alt="" className='w-15 '/> */} 
                                  {/* <h1 className='tracking-widest font-opensans font-semibold dark:text-white  text-2xl'>REC<span className='text-[#3730A3]'>✦</span>VA</h1> */}
                                  <div className="w-40 h-12 object-contain">
-                                  <img src={recovalogo} alt="" />
+                                  <img src={logo} alt="" />
                                  </div>
                                  
                                  </div>

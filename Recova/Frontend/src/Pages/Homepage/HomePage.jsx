@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import NavbarComp from './components/NavbarComp'
 import Landing from './components/Landing'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Navbar,
   MobileNav,
@@ -11,9 +11,10 @@ import {
   Card,
 } from "@material-tailwind/react";
 import Footer from '../../components/Footer';
-import recovalogo from '../../assets/recovalogo.png';
+import recovalogo from '../../assets/logo.png';
 function HomePage() {
   const [openNav, setOpenNav] = useState(false);
+  const location = useLocation();
  
   useEffect(() => {
       window.addEventListener(
@@ -24,6 +25,15 @@ function HomePage() {
      
   
     const navigate = useNavigate();
+
+    useEffect(() => {
+      const params = new URLSearchParams(location.search);
+      const verifyId = params.get("verify");
+      if (verifyId) {
+        navigate(`/verify/${verifyId}`, { replace: true });
+      }
+    }, [location.search, navigate]);
+
     const handleLoginNavigate = () => {
       navigate("/login");
   
@@ -132,7 +142,7 @@ function HomePage() {
                   >
                     <div className='flex justify-center items-center'>
            
-                    <img className='h-10 w-auto object-contain' src={recovalogo} alt="Recova Logo" />
+                    <img className='h-12 w-auto object-contain' src={recovalogo} alt="Recova Logo" />
                     
                     </div>
                   </Typography>

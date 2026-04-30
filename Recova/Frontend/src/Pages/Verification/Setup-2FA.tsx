@@ -4,6 +4,124 @@ import QRCode from 'qrcode';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const lock2 = new URL('../../assets/lock2.png', import.meta.url).href;
+
+type TotpSetupResult =
+  | { status: 'verified'; factorId: string }
+  | { status: 'needsVerification'; factorId: string }
+  | { status: 'enrolled'; factorId: string; secret: string; qrCode: string };
+
+let totpSetupPromise: Promise<TotpSetupResult> | null = null;
+
+async function initializeTotpSetup(): Promise<TotpSetupResult> {
+  if (totpSetupPromise) {
+    return totpSetupPromise;
+  }
+
+  const setupPromise: Promise<TotpSetupResult> = (async (): Promise<TotpSetupResult> => {
+    // 0. Check if user is logged in
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      throw new Error('You must be logged in to enable 2FA. Please log in first.');
+    }
+
+    // Check if force-reset flag is set (from reset button)
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceReset = urlParams.get('reset') === 'true';
+
+    // 1. Check if user already has 2FA enabled
+    const { data: existingFactors } = await supabase.auth.mfa.listFactors();
+
+    // Check for verified factors first
+    if (existingFactors?.totp?.length) {
+      const verifiedFactor = existingFactors.totp.find((factor) => factor.status === 'verified');
+
+      if (verifiedFactor) {
+        // User has a verified factor - check their session level
+        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+
+        if (aal?.currentLevel === 'aal2') {
+          return { status: 'verified', factorId: verifiedFactor.id };
+        }
+
+        return { status: 'needsVerification', factorId: verifiedFactor.id };
+      }
+
+      // Only try to clean up unverified factors
+      for (const factor of existingFactors.totp) {
+        if (factor.status !== 'verified') {
+          try {
+            await supabase.auth.mfa.unenroll({ factorId: factor.id });
+          } catch (error) {
+            console.warn('Could not unenroll factor:', factor.id, error);
+          }
+        }
+      }
+
+      // Wait for unenroll to complete
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+
+    // Clear the reset parameter from URL
+    if (forceReset) {
+      window.history.replaceState({}, '', '/setup-2fa');
+    }
+
+    // 2. Enroll a new TOTP factor with a unique name
+    const timestamp = Date.now();
+    const { data, error } = await supabase.auth.mfa.enroll({
+      factorType: 'totp',
+      friendlyName: `Recova App ${timestamp}`,
+    });
+
+    if (error) {
+      throw new Error(`Failed to enroll: ${error.message}. Make sure MFA is enabled in your Supabase dashboard.`);
+    }
+
+    if (!data) {
+      throw new Error('Failed to enroll 2FA. Please try again.');
+    }
+
+    const totpSecret = data.totp.secret;
+
+    // 4. Generate QR code - build our own simple URI to reduce size
+    const { data: { user } } = await supabase.auth.getUser();
+    const userEmail = user?.email || 'user@recova.com';
+    const simpleUri = `otpauth://totp/Recova:${encodeURIComponent(userEmail)}?secret=${totpSecret}&issuer=Recova`;
+
+    let qrCodeDataUrl = '';
+    try {
+      qrCodeDataUrl = await QRCode.toDataURL(simpleUri, {
+        errorCorrectionLevel: 'M',
+        width: 300,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+    } catch (qrError) {
+      console.error('QR Code generation error:', qrError);
+      if (typeof data.totp.qr_code === 'string' && data.totp.qr_code.startsWith('data:')) {
+        qrCodeDataUrl = data.totp.qr_code;
+      }
+    }
+
+    return {
+      status: 'enrolled',
+      factorId: data.id,
+      secret: totpSecret,
+      qrCode: qrCodeDataUrl,
+    };
+  })().finally(() => {
+    totpSetupPromise = null;
+  });
+
+  totpSetupPromise = setupPromise;
+  return setupPromise;
+}
+
 
 
 
@@ -20,6 +138,7 @@ export default function Setup2FA() {
   const [verificationType, setVerificationType] = useState("authenticator");
   const [needsVerification, setNeedsVerification] = useState(false); // New: for showing verification form
   const [resetting, setResetting] = useState(false);
+  const[loading, setLoading] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [countdown, setCountdown] = useState(0); // Countdown timer for rate limiting
 
@@ -27,138 +146,52 @@ export default function Setup2FA() {
 
 
   useEffect(() => {
-    
+    let isActive = true;
 
     async function enrollMFA() {
       try {
-        // 0. Check if user is logged in
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError || !session) {
-          setError("You must be logged in to enable 2FA. Please log in first.");
+        const result = await initializeTotpSetup();
+
+        if (!isActive) {
           return;
         }
 
-        // Check if force-reset flag is set (from reset button)
-        const urlParams = new URLSearchParams(window.location.search);
-        const forceReset = urlParams.get('reset') === 'true';
-
-        // 1. Check if user already has 2FA enabled
-        const { data: existingFactors } = await supabase.auth.mfa.listFactors();
-        
-        // Check for verified factors first
-        if (existingFactors?.totp?.length) {
-          const verifiedFactor = existingFactors.totp.find(f => f.status === 'verified');
-          
-          if (verifiedFactor) {
-            // User has a verified factor - check their session level
-            const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-            
-            if (aal?.currentLevel === 'aal2') {
-              // Already verified this session, go to profile
-              navigate("/profile", { replace: true });
-              return;
-            } else {
-              // Not verified this session - show verification form
-              console.log("User has verified factor but not AAL2, showing verification form");
-              setFactorId(verifiedFactor.id);
-              setNeedsVerification(true);
-              return;
-            }
-          }
-          
-          // Only try to clean up UNverified factors
-          console.log("Removing unverified factors...");
-          for (const factor of existingFactors.totp) {
-            if (factor.status !== 'verified') {
-              try {
-                const { error: unenrollError } = await supabase.auth.mfa.unenroll({ 
-                  factorId: factor.id 
-                });
-                if (unenrollError) {
-                  console.warn("Could not unenroll factor:", factor.id, unenrollError);
-                } else {
-                  console.log("Successfully unenrolled factor:", factor.id);
-                }
-              } catch (e) {
-                console.warn("Exception during unenroll:", e);
-              }
-            }
-          }
-          
-          // Wait for unenroll to complete
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-        
-        // Clear the reset parameter from URL
-        if (forceReset) {
-          window.history.replaceState({}, '', '/setup-2fa');
-        }
-
-        // 2. Enroll a new TOTP factor with a unique name
-        const timestamp = Date.now();
-        const { data, error } = await supabase.auth.mfa.enroll({
-          factorType: 'totp',
-          friendlyName: `Recova App ${timestamp}`,
-        });
-
-        if (error) {
-          console.error("MFA Enrollment Error:", error);
-          setError(`Failed to enroll: ${error.message}. Make sure MFA is enabled in your Supabase dashboard.`);
+        if (result.status === 'verified') {
+          navigate('/profile', { replace: true });
           return;
         }
 
-        if (data) {
-          console.log("MFA enrollment data:", data);
-          console.log("TOTP data:", data.totp);
-          console.log("Secret:", data.totp.secret);
-          console.log("QR code URI:", data.totp.qr_code);
-          console.log("QR code URI length:", data.totp.qr_code?.length);
-          
-          // 3. Store the factor ID and secret
-          setFactorId(data.id);
-          
-          // 5. Store the secret FIRST for manual entry option
-          const totpSecret = data.totp.secret;
-          console.log("Setting secret:", totpSecret);
-          setSecret(totpSecret);
-          
-          // 4. Generate QR code - build our own simple URI to reduce size
-          try {
-            // Get user email for the URI
-            const { data: { user } } = await supabase.auth.getUser();
-            const userEmail = user?.email || 'user@recova.com';
-            
-            // Build a simpler TOTP URI
-            const simpleUri = `otpauth://totp/Recova:${encodeURIComponent(userEmail)}?secret=${totpSecret}&issuer=Recova`;
-            
-            console.log("Simple URI:", simpleUri);
-            console.log("Simple URI length:", simpleUri.length);
-            
-            const qrCodeDataUrl = await QRCode.toDataURL(simpleUri, {
-              errorCorrectionLevel: 'M',
-              width: 300,
-              margin: 1,
-              color: {
-                dark: '#000000',
-                light: '#FFFFFF'
-              }
-            });
-            setQrCode(qrCodeDataUrl);
-            console.log("QR code generated successfully");
-          } catch (qrError) {
-            console.error("QR Code generation error:", qrError);
-            // If QR generation fails, still show the secret for manual entry
-            setError("QR code generation failed. Please use manual entry below.");
-          }
+        if (result.status === 'needsVerification') {
+          console.log('User has verified factor but not AAL2, showing verification form');
+          setFactorId(result.factorId);
+          setNeedsVerification(true);
+          return;
+        }
+
+        setFactorId(result.factorId);
+        setSecret(result.secret);
+
+        if (result.qrCode) {
+          setQrCode(result.qrCode);
+          console.log('QR code generated successfully');
+        } else {
+          setError('QR code generation failed. Please use manual entry below.');
         }
       } catch (err: any) {
-        console.error("MFA Setup Error:", err);
-        setError(err.message || "Failed to setup 2FA. Please make sure you're logged in.");
+        if (!isActive) {
+          return;
+        }
+
+        console.error('MFA Setup Error:', err);
+        setError(err.message || 'Failed to setup 2FA. Please make sure you\'re logged in.');
       }
     }
 
     enrollMFA();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   // Countdown timer effect
@@ -179,6 +212,7 @@ export default function Setup2FA() {
 
   const onVerifySetup = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError("");
     setSuccess("");
 
@@ -187,11 +221,13 @@ export default function Setup2FA() {
     if (aal?.currentLevel === 'aal2') {
       // Already verified, just go to profile
       window.location.href = "/profile";
+      setLoading(false);
       return;
     }
 
     if (!verificationCode || verificationCode.length !== 6) {
       setError("Please enter a valid 6-digit code");
+      setLoading(false);
       return;
     }
 
@@ -213,6 +249,7 @@ export default function Setup2FA() {
           setCountdown(retryAfter);
           setError(`Too many incorrect attempts. Wait ${retryAfter} seconds before trying again.`);
           setVerificationCode("");
+          setLoading(false);
           return;
         }
         throw axiosError;
@@ -223,6 +260,7 @@ export default function Setup2FA() {
         setCountdown(retryAfter);
         setError(checkRes.data.message);
         setVerificationCode("");
+        setLoading(false);
         return;
       }
 
@@ -237,6 +275,7 @@ export default function Setup2FA() {
       if (challengeError) {
         // console.error("Challenge error:", challengeError);
         setError(challengeError.message);
+        setLoading(false);
         return;
       }
 
@@ -271,6 +310,8 @@ export default function Setup2FA() {
     } catch (err: any) {
       console.error("Unexpected error:", err);
       setError(err.response?.data?.message || err.message || "Verification failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -395,18 +436,18 @@ export default function Setup2FA() {
               Your account is now protected with two-factor authentication.
             </p>
             <p className="mt-4 text-sm text-gray-500 dark:text-gray-500">
-              Redirecting to pricing...
+              Redirecting to profile...
             </p>
 
            
           </div>
               <div className="mt-6 text-center">
-          <a 
+          {/* <a 
             href="/pricing" 
             className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary"
           >
             Go to Pricing
-          </a>
+          </a> */}
         </div>
         </div>
       </div>
@@ -416,13 +457,16 @@ export default function Setup2FA() {
   // If user needs to verify (2FA already set up, just needs to enter code)
   if (needsVerification) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-secondary px-4">
-        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-poppinsBold text-center text-gray-900 dark:text-white mb-4">
+      <div className="flex items-center gap-10 w-full justify-center min-h-screen  dark:bg-secondary px-4">
+          <div className='max-w-[50%] '>
+          <img src={lock2} className='opacity-35' alt="Lock Icon" />
+        </div>
+        <div className="max-w-[50%] bg-white dark:bg-gray-800 rounded-xl shadow-lg p-16">
+          <h2 className="text-3xl  font-poppinsBold text-center text-primary dark:text-white mb-10">
             Verify Your Identity
           </h2>
           <div className="flex items-center justify-center gap-2 mb-6">
-            <p className="text-center font-poppinsMedium text-xs text-gray-600 dark:text-gray-400">
+            <p className="text-center font-poppinsMedium text-sm text-gray-600 dark:text-gray-400">
               Enter the 6-digit code from your authenticator app
             </p>
            
@@ -432,7 +476,7 @@ export default function Setup2FA() {
              <button
               type="button"
               onClick={() => setShowInfoModal(true)}
-              className="flex-shrink-0 w-60 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors cursor-pointer"
+              className="flex-shrink-0 w-60 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors mb-5 cursor-pointer"
               title="Why might my code be invalid?"
             >
               <span className="text-xs font-poppinsSemiBold">Why do i see invalid code error?</span>
@@ -448,11 +492,12 @@ export default function Setup2FA() {
                 placeholder="000000"
                 maxLength={6}
                 disabled={countdown > 0}
-                className="w-full px-4 py-3 text-center text-2xl font-mono border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="mb-5 w-full px-4 py-3 text-center text-2xl font-mono border border-gray-300 rounded-3xl focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 required
                 autoFocus
               />
             </div>
+           
 
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded text-sm">
@@ -475,27 +520,22 @@ export default function Setup2FA() {
 
             <button
               type="submit"
-              disabled={verificationCode.length !== 6 || countdown > 0}
-              className="w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={verificationCode.length !== 6 || countdown > 0 || loading}
+              className="w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {countdown > 0 ? `Wait ${countdown}s` : 'Verify Code'}
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                </div>
+              ) : countdown > 0 ? `Wait ${countdown}s` : 'Verify Code'}
+            
             </button>
           </form>
 
-          {/* <div className="mt-6 border-t pt-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              Need to scan a new QR? Reset 2FA to enroll again.
-            </p>
-            <button
-              type="button"
-              onClick={resetTotp}
-              disabled={resetting}
-              className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {resetting ? "Resetting..." : "Reset 2FA and Scan New QR"}
-            </button>
-          </div> */}
+       
         </div>
+
+      
 
         {/* Info Modal */}
         {showInfoModal && (
@@ -573,24 +613,18 @@ export default function Setup2FA() {
   return (
 
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-secondary px-4 space-y-6">
-      <div className="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
+      <div className="w-full  bg-primary  dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 p-8">
         <div className="text-center mb-6">
           {/* <p className="text-sm uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 font-semibold">Security</p> */}
-          <h1 className="text-3xl font-poppinsBold text-gray-900 dark:text-white mt-2">Enable Two-Factor Authentication</h1>
+          <h1 className="text-3xl font-poppinsMedium text-slate-300 dark:text-white mt-2">Enable Two-Factor Authentication</h1>
           
         </div>
 
-        <div className="flex justify-center items-center mb-6">
-          <button
-            onClick={() => setVerificationType("authenticator")}
-            className={`flex flex-col items-start p-4 rounded-lg border transition focus:outline-none focus:ring-2 focus:ring-indigo-500
-              ${verificationType === "authenticator"
-                ? "border-indigo-500 bg-indigo-50 text-indigo-900 dark:bg-indigo-900/40 dark:border-indigo-400"
-                : "border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50 dark:border-gray-700 dark:hover:border-indigo-500 dark:hover:bg-indigo-900/30"}`}
-          >
-                    <span className="text-xs font-poppinsMedium">Get your code via</span>
-            <span className="text-xl font-poppinsMedium text-gray-600 dark:text-gray-400">Google Authenticator</span>
-          </button>
+        <div className="flex justify-center items-center gap-3 mb-6">
+        
+                    <span className="text-l font-poppinsMedium text-slate-300">Get your code via</span>
+            <span className="text-l border-2 p-3 rounded-md border-blue-300 font-poppinsMedium text-white dark:text-gray-400">Google Authenticator</span>
+          
 
           {/* <button
             onClick={() => setVerificationType("sms")}
@@ -612,9 +646,9 @@ export default function Setup2FA() {
       </div>
 
         {verificationType==="authenticator" &&   <div className="max-w-2xl w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-        <h2 className="text-3xl font-poppinsBold text-center text-gray-900 dark:text-white mb-6">
+        {/* <h2 className="text-3xl font-poppinsBold text-center text-gray-900 dark:text-white mb-6">
           Enable Two-Factor Authentication
-        </h2>
+        </h2> */}
         
         {/* Show error first if user not logged in */}
         {error && !qrCode && (
@@ -751,7 +785,13 @@ export default function Setup2FA() {
                 disabled={!secret || verificationCode.length !== 6}
                 className="w-full bg-primary hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Verify and Enable 2FA
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  </div>
+                ) : (
+                  "Verify and Enable 2FA"
+                )}
               </button>
             </form>
           </div>
@@ -795,7 +835,7 @@ export default function Setup2FA() {
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-lg">📱</span>
+                  
                     <div>
                       <p className="font-poppinsSemiBold text-gray-900 dark:text-white">App not synced</p>
                       <p className="font-poppinsMedium">Ensure Google Authenticator displays the correct code for Recova</p>

@@ -4,7 +4,7 @@ import plotly.io as pio
 import json
 import pandas as pd
 import numpy as np
-from backend.app.db.supabase_client import supabase
+from ..db.supabase_client import supabase
 
 from reportlab.platypus import Image, Spacer
 
@@ -35,7 +35,15 @@ def plotly_to_png(chart_input, width=700, height=400) -> BytesIO:
         raise ValueError("chart_input must be a dict or JSON string")
 
     fig = pio.from_json(chart_json_str)
-    img_bytes = pio.to_image(fig, format="png", width=width, height=height)
+    try:
+        img_bytes = pio.to_image(fig, format="png", width=width, height=height)
+    except ValueError as exc:
+        if "kaleido" in str(exc).lower():
+            raise RuntimeError(
+                "Plotly image export requires the 'kaleido' package. "
+                "Install it with: pip install kaleido"
+            ) from exc
+        raise
     return BytesIO(img_bytes)
 
 

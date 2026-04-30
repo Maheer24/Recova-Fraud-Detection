@@ -1,5 +1,5 @@
 import express from 'express';
-import connectDB from './db/db.js';
+import mongoService from './db/db.js';
 import userRouter from './routes/userrouter.js';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -20,7 +20,7 @@ import jwt from 'jsonwebtoken';
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY)
 const app = express();
-connectDB();
+mongoService.connect();
 app.use(cors({
   origin: "http://localhost:5173", // ✅ Set this to your frontend URL
   credentials: true,  // ✅ Allows cookies to be sent
@@ -101,13 +101,6 @@ app.get("/auth/google/callback",
   }
 );
 
-// Google OAuth callback URL
-// app.get("/auth/google/callback",
-//   passport.authenticate("google", { failureRedirect: "/login" }),
-//   (req, res) => {
-//     res.redirect("http://localhost:5173/profile"); // Redirect after successful login
-//   }
-// );
 app.get("/auth/logout", (req, res) => {
 
 });
@@ -153,11 +146,6 @@ app.get('/success', async (req, res) => {
       // Log the Stripe transaction ID (payment_intent)
       console.log('Stripe Transaction ID:', session.payment_intent);
 
-      // Optionally, retrieve more details of the PaymentIntent (if needed)
-      // const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent);
-      // console.log('Payment Intent details:', paymentIntent);
-
-      // Redirect to the success page
       res.redirect('http://localhost:5173/success');
     } else {
       res.redirect('http://localhost:5173/cancel');
@@ -168,71 +156,6 @@ app.get('/success', async (req, res) => {
     return res.redirect('http://localhost:5173/login');
   }
 });
-
-// app.get('/success', auth.authuser,async (req, res) => {
-//   const sessionid = req.query.session_id;
-//   try {
-//     const session = await stripe.checkout.sessions.retrieve(sessionid);
-//     if (session.payment_status === 'paid') {
-//       res.redirect('http://localhost:5173/success');
-//       res.json({ message: 'Payment successful', session });
-//       console.log('Stripe Transaction ID:', session.payment_intent);
-
-//          const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent);
-//       console.log('Payment Intent details:', paymentIntent);
-
-
-//     }
-
-//     else {
-//       res.redirect('http://localhost:5173/cancel');
-//       res.status(400).json({ message: 'Payment not completed.' });
-//     }
-
-//   } catch (error) {
-//     console.error('Error retrieving session:', error);
-//     return res.redirect('http://localhost:5173/login');
-
-//   }
-// })
-
-
-// app.post('/ask', async (req, res) => {
-//   const userQuestion = req.body.message;
-
-//   const response = await fetch('https://api.openai.com/v1/chat/completions', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` // Put your key in .env file
-//     },
-//     body: JSON.stringify({
-//       model: 'gpt-3.5-turbo',
-//       messages: [
-//         {
-//           role: 'system',
-//           content: `You are an assistant for the website BookARide.com. This website allows users to easily book rides at affordable prices. Answer based on this information only.`
-//         },
-//         {
-//           role: 'user',
-//           content: userQuestion
-//         }
-//       ]
-//     })
-//   });
-//  const data = await response.json();
-//     console.log('OpenAI API response:', data); // See the full response
-
-//     if (data.choices && data.choices.length > 0) {
-//       res.json({ reply: data.choices[0].message.content });
-//     } else {
-//       res.status(500).json({
-//         error: 'No valid response from OpenAI',
-//         fullResponse: data
-//       });
-//     } 
-// });
-
 
 
 app.post('/payfast/pay', (req, res) => {
